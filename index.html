@@ -1,1434 +1,227 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hello Kitty 风 · 任务卡工作台 v3（阿里云 DashScope · 简单/复杂双区）</title>
+<meta charset="UTF-8">
+<title>任务卡工作台</title>
 
 <style>
-  /* =========================
-     🎀 Hello Kitty Theme
-     ========================= */
-  :root {
-    --primary: #ff6f91;
-    --primary-2: #ff9ab5;
-    --primary-soft: #ffe3ec;
-    --primary-soft2: #fff0f5;
 
-    --bg: #fff7fa;
-    --card-bg: #ffffff;
-    --border: #ffd6e5;
+body{
+font-family:system-ui,-apple-system;
+margin:0;
+background:#f6f8fb;
+color:#0f172a;
+}
 
-    --text-main: #3a3a3a;
-    --text-sub: #9b6b7a;
+header{
+padding:20px;
+background:#111827;
+color:white;
+}
 
-    --shadow-soft: 0 8px 24px rgba(255, 111, 145, 0.15);
-    --shadow-strong: 0 18px 50px rgba(255, 111, 145, 0.30);
+.container{
+display:flex;
+gap:20px;
+padding:24px;
+}
 
-    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+.panel{
+flex:1;
+background:white;
+border-radius:12px;
+padding:20px;
+box-shadow:0 10px 20px rgba(0,0,0,0.05);
+}
 
-    --radius-lg: 22px;
-    --radius-md: 16px;
-    --radius-sm: 12px;
-  }
+textarea{
+width:100%;
+height:200px;
+border:1px solid #e5e7eb;
+border-radius:8px;
+padding:10px;
+}
 
-  /* 🧸 Kitty Night Light Mode */
-  html[data-theme="kitty-night"] {
-    --primary: #ff84a8;
-    --primary-2: #ffc1d2;
-    --primary-soft: rgba(255, 132, 168, 0.16);
-    --primary-soft2: rgba(255, 193, 210, 0.12);
+button{
+background:#2563eb;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+}
 
-    --bg: #14121a;
-    --card-bg: #1e1b27;
-    --border: #3a2a3a;
+.result{
+margin-top:20px;
+background:#f8fafc;
+padding:12px;
+border-radius:8px;
+border:1px solid #e5e7eb;
+white-space:pre-wrap;
+}
 
-    --text-main: #f4ecf1;
-    --text-sub: #c9b1bf;
-
-    --shadow-soft: 0 10px 28px rgba(0,0,0,0.35);
-    --shadow-strong: 0 22px 60px rgba(0,0,0,0.48);
-  }
-
-  * { box-sizing: border-box; }
-
-  body{
-    margin:0;
-    font-family:"Microsoft YaHei","微软雅黑","PingFang SC",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
-    color:var(--text-main);
-    background:
-      radial-gradient(circle at top left, rgba(255, 230, 239, 0.95) 0%, transparent 40%),
-      radial-gradient(circle at bottom right, rgba(255, 240, 246, 0.92) 0%, transparent 45%),
-      var(--bg);
-    overflow-x: hidden;
-  }
-  html[data-theme="kitty-night"] body{
-    background:
-      radial-gradient(circle at top left, rgba(255, 132, 168, 0.16) 0%, transparent 42%),
-      radial-gradient(circle at bottom right, rgba(255, 193, 210, 0.12) 0%, transparent 48%),
-      var(--bg);
-  }
-
-  /* Decorations */
-  .decor {
-    position: fixed;
-    pointer-events: none;
-    z-index: 1;
-    opacity: 0.85;
-    filter: drop-shadow(0 10px 18px rgba(255, 111, 145, 0.18));
-  }
-  html[data-theme="kitty-night"] .decor {
-    opacity: 0.55;
-    filter: drop-shadow(0 14px 22px rgba(0,0,0,0.5));
-  }
-  .decor.tl { top: 12px; left: 10px; width: 180px; transform: rotate(-8deg); }
-  .decor.br { right: 10px; bottom: 10px; width: 210px; transform: rotate(10deg); }
-
-  /* Topbar */
-  .topbar{
-    height:56px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 18px;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: rgba(255,255,255,0.86);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--border);
-  }
-  html[data-theme="kitty-night"] .topbar {
-    background: rgba(30,27,39,0.82);
-  }
-  .topbar-left{ display:flex; align-items:center; gap:10px; }
-  .topbar-logo{
-    width:30px;height:30px;border-radius:12px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-2));
-    box-shadow: var(--shadow-soft);
-    display:flex;align-items:center;justify-content:center;
-    color:#fff;font-weight:900;font-size:14px;
-  }
-  .topbar-title{ font-size:15px;font-weight:900; letter-spacing:0.2px; }
-  .topbar-sub{ font-size:12px;color:var(--text-sub); margin-top:1px; }
-  .topbar-right{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
-
-  .badge{
-    border-radius:999px;
-    padding:4px 10px;
-    font-size:11px;
-    font-weight:800;
-    background: var(--primary-soft);
-    color: var(--primary);
-    border: 1px solid var(--border);
-    white-space:nowrap;
-  }
-
-  /* Layout */
-  .page{
-    max-width:1320px;
-    margin:14px auto 28px;
-    padding:0 16px;
-    position: relative;
-    z-index: 5;
-  }
-  .page-subtitle{
-    font-size:13px;
-    color:var(--text-sub);
-    margin:10px 0 12px;
-  }
-
-  .card{
-    background:var(--card-bg);
-    border-radius: var(--radius-lg);
-    border: 2px solid var(--border);
-    box-shadow: var(--shadow-soft);
-    padding: 16px 16px 14px;
-  }
-  html[data-theme="kitty-night"] .card { border-width: 1px; }
-  .card-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap: 10px;
-    margin-bottom:10px;
-  }
-  .card-title{
-    font-size:14px;
-    font-weight:900;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-
-  /* Controls */
-  .control{
-    display:flex; align-items:center; gap:8px;
-    font-size:12px; color:var(--text-sub); font-weight:800;
-  }
-  select, input[type="text"]{
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    padding: 7px 10px;
-    background: rgba(255,255,255,0.75);
-    color: var(--text-main);
-    font-weight: 800;
-    outline:none;
-  }
-  html[data-theme="kitty-night"] select, html[data-theme="kitty-night"] input[type="text"]{
-    background: rgba(30,27,39,0.70);
-    border-color: rgba(255,193,210,0.22);
-    color: var(--text-main);
-  }
-
-  /* API box */
-  .api-key-box{
-    background: linear-gradient(180deg, rgba(255, 240, 245, 0.95), rgba(255,255,255,0.85));
-    border: 2px dashed #ffc0d6;
-    border-radius: var(--radius-md);
-    padding: 12px 12px;
-    margin-bottom: 12px;
-  }
-  html[data-theme="kitty-night"] .api-key-box{
-    background: linear-gradient(180deg, rgba(255,132,168,0.10), rgba(30,27,39,0.75));
-    border: 1px dashed rgba(255,132,168,0.35);
-  }
-  .api-key-title{
-    font-size:12px;
-    font-weight:900;
-    color:var(--text-main);
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin-bottom:6px;
-  }
-  .api-key-sub{ font-size:11px; color:var(--text-sub); font-weight:600; }
-
-  .api-key-actions{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-top:8px;
-    flex-wrap:wrap;
-  }
-  .api-key-tip{ font-size:11px; color:var(--text-sub); font-weight:600; }
-
-  input[type="password"]{
-    width:100%;
-    border-radius: var(--radius-md);
-    border: 2px solid #ffd1df;
-    padding: 9px 12px;
-    font-size:13px;
-    outline:none;
-    background:#fffafc;
-    transition: box-shadow .12s ease, border-color .12s ease, transform .08s ease;
-  }
-  html[data-theme="kitty-night"] input[type="password"]{
-    background: rgba(255,255,255,0.04);
-    border-color: rgba(255,193,210,0.25);
-    color: var(--text-main);
-  }
-  input[type="password"]:focus{
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(255, 111, 145, 0.24);
-    transform: translateY(-1px);
-  }
-
-  /* Form */
-  .brief-label{
-    font-size:14px;
-    font-weight:1000;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin-bottom:8px;
-  }
-  .brief-label span{
-    font-size:12px;
-    font-weight:700;
-    color:var(--text-sub);
-  }
-
-  textarea{
-    width:100%;
-    min-height: 170px;
-    border-radius: var(--radius-md);
-    border: 2px solid #ffd1df;
-    padding: 12px 12px;
-    font-size:13px;
-    line-height:1.7;
-    resize:vertical;
-    outline:none;
-    background:#fffafc;
-    transition: box-shadow .12s ease, border-color .12s ease, transform .08s ease;
-  }
-  html[data-theme="kitty-night"] textarea{
-    background: rgba(255,255,255,0.04);
-    border-color: rgba(255,193,210,0.25);
-    color: var(--text-main);
-  }
-  textarea:focus{
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(255, 111, 145, 0.22);
-    transform: translateY(-1px);
-  }
-
-  /* Buttons */
-  .btn-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-
-  button{
-    border:none;
-    border-radius:999px;
-    padding: 9px 14px;
-    font-size:13px;
-    font-weight:1000;
-    cursor:pointer;
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    white-space:nowrap;
-    transition: transform .12s ease, box-shadow .12s ease, background .12s ease, color .12s ease;
-    user-select: none;
-  }
-  button:disabled{ opacity:0.6; cursor:not-allowed; transform:none; box-shadow:none; }
-
-  .btn-primary{
-    background: linear-gradient(135deg, var(--primary), var(--primary-2));
-    color:#fff;
-    box-shadow: 0 10px 22px rgba(255, 111, 145, 0.42);
-  }
-  .btn-primary:hover:not(:disabled){
-    animation: kitty-bounce 0.55s ease both;
-    box-shadow: 0 16px 30px rgba(255, 111, 145, 0.55);
-  }
-  @keyframes kitty-bounce {
-    0%   { transform: translateY(0) scale(1); }
-    30%  { transform: translateY(-3px) scale(1.03); }
-    60%  { transform: translateY(0) scale(1.01); }
-    100% { transform: translateY(-1px) scale(1.02); }
-  }
-
-  .btn-secondary{
-    background: var(--primary-soft2);
-    color: var(--primary);
-    border: 1px solid #ffd1df;
-    box-shadow: 0 8px 18px rgba(255, 111, 145, 0.10);
-  }
-  html[data-theme="kitty-night"] .btn-secondary{
-    background: rgba(255,132,168,0.10);
-    border-color: rgba(255,132,168,0.25);
-    color: var(--primary);
-  }
-  .btn-secondary:hover:not(:disabled){
-    transform: translateY(-1px);
-    box-shadow: 0 12px 22px rgba(255, 111, 145, 0.16);
-  }
-
-  .btn-ghost{
-    background: transparent;
-    color: var(--text-sub);
-    font-weight:900;
-  }
-  .btn-ghost:hover{ background: rgba(255, 111, 145, 0.10); transform: translateY(-1px); }
-
-  .pill{
-    font-size:11px;
-    padding: 3px 10px;
-    border-radius:999px;
-    background: var(--primary-soft);
-    color: var(--primary);
-    font-weight:1000;
-    border: 1px solid var(--border);
-  }
-  .action-tip{
-    font-size:11px;
-    color: var(--text-sub);
-    font-weight:700;
-  }
-  .status{
-    font-size:11px;
-    color: var(--text-sub);
-    min-height:14px;
-    margin-top:10px;
-    font-weight:700;
-  }
-
-  /* Workspaces layout modes */
-  .workspace-wrap{ display:flex; flex-direction:column; gap: 14px; }
-
-  .workspace-grid{
-    display:grid;
-    gap: 14px;
-  }
-  /* mode: vertical (上下) */
-  .mode-vertical .workspace-grid{
-    grid-template-columns: 1fr;
-  }
-  /* mode: horizontal (左右) */
-  .mode-horizontal .workspace-grid{
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items:start;
-  }
-  @media (max-width: 1100px){
-    .mode-horizontal .workspace-grid{ grid-template-columns: 1fr; }
-  }
-  /* mode: tabs */
-  .mode-tabs .workspace-grid{
-    grid-template-columns: 1fr;
-  }
-
-  /* tabs header */
-  .tabs{
-    display:none;
-    gap: 8px;
-    align-items:center;
-    margin-bottom: 4px;
-  }
-  .mode-tabs .tabs{ display:flex; }
-  .tab-btn{
-    border-radius:999px;
-    padding: 8px 12px;
-    font-size:12px;
-    font-weight:1000;
-    border: 1px solid var(--border);
-    background: rgba(255,255,255,0.75);
-    color: var(--text-sub);
-    box-shadow: var(--shadow-soft);
-    cursor:pointer;
-  }
-  html[data-theme="kitty-night"] .tab-btn{
-    background: rgba(30,27,39,0.70);
-    border-color: rgba(255,193,210,0.22);
-    color: var(--text-sub);
-  }
-  .tab-btn.active{
-    background: linear-gradient(135deg, var(--primary), var(--primary-2));
-    color: #fff;
-    border-color: transparent;
-  }
-  .mode-tabs .workspace-card{ display:none; }
-  .mode-tabs .workspace-card.active{ display:block; }
-
-  /* results */
-  .result-grid{
-    display:grid;
-    grid-template-columns: repeat(3, minmax(0,1fr));
-    gap: 14px;
-    margin-top: 12px;
-  }
-  @media (max-width: 1200px){
-    .result-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-  }
-  @media (max-width: 880px){
-    .result-grid{ grid-template-columns: 1fr; }
-  }
-
-  .result-box{
-    border-radius: var(--radius-md);
-    background: linear-gradient(180deg, rgba(255, 247, 251, 0.92), rgba(255,255,255,0.92));
-    border: 2px dashed #ffc0d6;
-    padding: 12px 12px;
-    font-family: var(--mono);
-    font-size:12px;
-    line-height:1.65;
-    white-space: pre-wrap;
-    word-break: break-word;
-    min-height: 155px;
-  }
-  html[data-theme="kitty-night"] .result-box{
-    background: rgba(255,255,255,0.04);
-    border-color: rgba(255,132,168,0.35);
-  }
-
-  /* History drawer */
-  .history-drawer-toggle{
-    position: fixed;
-    right: 12px;
-    bottom: 22px;
-    z-index: 40;
-    background: rgba(255,255,255,0.92);
-    border-radius: 999px;
-    border: 2px solid var(--border);
-    box-shadow: var(--shadow-soft);
-    padding: 9px 12px;
-    font-size: 12px;
-    color: var(--text-sub);
-    display:inline-flex;
-    align-items:center;
-    gap: 6px;
-    font-weight: 900;
-  }
-  html[data-theme="kitty-night"] .history-drawer-toggle{
-    background: rgba(30,27,39,0.88);
-    border-color: rgba(255,193,210,0.28);
-  }
-
-  .history-drawer{
-    position: fixed;
-    right: 16px;
-    top: 64px;
-    bottom: 22px;
-    width: 350px;
-    max-width: 90vw;
-    background: linear-gradient(180deg, rgba(255,250,252,0.98), rgba(255,255,255,0.98));
-    border-radius: 24px;
-    border: 2px solid var(--border);
-    box-shadow: var(--shadow-strong);
-    display:none;
-    flex-direction:column;
-    z-index: 60;
-  }
-  html[data-theme="kitty-night"] .history-drawer{
-    background: linear-gradient(180deg, rgba(30,27,39,0.98), rgba(30,27,39,0.92));
-    border-color: rgba(255,193,210,0.25);
-  }
-
-  .history-drawer-header{
-    padding: 12px 14px 10px;
-    border-bottom: 1px solid rgba(255, 214, 229, 0.85);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap: 10px;
-  }
-  html[data-theme="kitty-night"] .history-drawer-header{
-    border-bottom-color: rgba(255,193,210,0.18);
-  }
-
-  .history-drawer-title{
-    font-size: 13px;
-    font-weight: 1000;
-    display:flex;
-    align-items:center;
-    gap: 8px;
-  }
-
-  .tag{
-    font-size:10px;
-    border-radius: 999px;
-    padding: 2px 8px;
-    background: linear-gradient(135deg, rgba(255,111,145,0.18), rgba(255,154,181,0.18));
-    color: var(--primary);
-    border: 1px solid rgba(255,111,145,0.35);
-    font-weight: 1000;
-  }
-  html[data-theme="kitty-night"] .tag{
-    background: rgba(255,132,168,0.12);
-    border-color: rgba(255,132,168,0.28);
-  }
-
-  .history-drawer-sub{
-    font-size: 11px;
-    color: var(--text-sub);
-    padding: 2px 14px 10px;
-    font-weight: 700;
-  }
-
-  .history-drawer-body{
-    padding: 0 10px 10px;
-    flex: 1;
-    display:flex;
-    flex-direction:column;
-  }
-
-  .history-list{
-    flex:1;
-    overflow:auto;
-    display:flex;
-    flex-direction:column;
-    gap: 10px;
-    margin-top: 6px;
-    padding-right: 2px;
-  }
-  .history-item{
-    border-radius: 16px;
-    border: 2px solid rgba(255, 214, 229, 0.95);
-    padding: 10px 10px;
-    cursor:pointer;
-    background: rgba(255, 247, 251, 0.9);
-    display:flex;
-    flex-direction:column;
-    gap: 6px;
-    transition: transform .10s ease, background .12s ease, border-color .12s ease;
-  }
-  html[data-theme="kitty-night"] .history-item{
-    background: rgba(255,255,255,0.03);
-    border-color: rgba(255,193,210,0.20);
-  }
-  .history-item:hover{
-    background: rgba(255, 230, 239, 0.95);
-    transform: translateY(-2px);
-    border-color: rgba(255, 111, 145, 0.55);
-  }
-  html[data-theme="kitty-night"] .history-item:hover{
-    background: rgba(255,132,168,0.10);
-    border-color: rgba(255,132,168,0.35);
-  }
-  .history-title{
-    font-size: 11px;
-    font-weight: 1000;
-    color: var(--text-main);
-  }
-  .history-meta{
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-sub);
-    display:flex; gap:6px; align-items:center; flex-wrap:wrap;
-  }
-  .history-empty{
-    font-size: 11px;
-    color: var(--text-sub);
-    text-align:center;
-    padding: 16px 0;
-    font-weight: 800;
-  }
-
-  .theme-toggle {
-    border-radius: 999px;
-    padding: 7px 10px;
-    border: 1px solid var(--border);
-    background: rgba(255,255,255,0.75);
-    box-shadow: var(--shadow-soft);
-    font-size: 12px;
-    font-weight: 900;
-    color: var(--text-sub);
-    cursor:pointer;
-  }
-  html[data-theme="kitty-night"] .theme-toggle{
-    background: rgba(30,27,39,0.70);
-    border-color: rgba(255,193,210,0.22);
-  }
-
-  .tiny{
-    font-size:11px; font-weight:800; color: var(--text-sub);
-  }
 </style>
+
 </head>
 
 <body>
 
-<!-- 🌸 Decorations -->
-<div class="decor tl" aria-hidden="true">
-  <svg viewBox="0 0 520 280" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#ff6f91" stop-opacity="0.85"/>
-        <stop offset="1" stop-color="#ffb6c1" stop-opacity="0.85"/>
-      </linearGradient>
-      <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#ffd1df" stop-opacity="0.9"/>
-        <stop offset="1" stop-color="#fff0f5" stop-opacity="0.9"/>
-      </linearGradient>
-    </defs>
-    <g opacity="0.9">
-      <path d="M430 40l10 22 24 3-18 15 6 23-22-12-22 12 6-23-18-15 24-3z" fill="url(#g2)"/>
-      <path d="M470 120l7 16 18 2-13 11 4 17-16-9-16 9 4-17-13-11 18-2z" fill="url(#g2)"/>
-      <circle cx="390" cy="120" r="10" fill="url(#g2)"/>
-    </g>
-    <g transform="translate(40,60)">
-      <path d="M130 70c-50 30-98 20-108-8-12-34 34-64 86-48 22 7 34 18 42 28 8-10 20-21 42-28 52-16 98 14 86 48-10 28-58 38-108 8-8-5-14-10-20-15-6 5-12 10-20 15z" fill="url(#g1)" stroke="#ff3d6e" stroke-opacity="0.35" stroke-width="6" stroke-linecap="round"/>
-      <ellipse cx="172" cy="70" rx="26" ry="24" fill="#fff0f5" stroke="#ff6f91" stroke-opacity="0.4" stroke-width="6"/>
-      <circle cx="162" cy="66" r="6" fill="#ff6f91" opacity="0.5"/>
-      <circle cx="182" cy="74" r="6" fill="#ff6f91" opacity="0.5"/>
-      <path d="M172 94c10 12 22 22 38 28-16 4-32 2-48-6-16 8-32 10-48 6 16-6 28-16 38-28" fill="#ffb6c1" opacity="0.55"/>
-    </g>
-  </svg>
+<header>
+<h2>任务卡工作台</h2>
+<div>基于历史任务逻辑增强的任务生成系统</div>
+</header>
+
+<div class="container">
+
+<div class="panel">
+
+<h3>任务输入</h3>
+
+<select id="model">
+<option value="qwen-plus">qwen-plus</option>
+<option value="qwen-max">qwen-max</option>
+</select>
+
+<br><br>
+
+<textarea id="brief" placeholder="输入任务brief..."></textarea>
+
+<br><br>
+
+<button onclick="generate()">生成任务卡</button>
+
 </div>
 
-<div class="decor br" aria-hidden="true">
-  <svg viewBox="0 0 560 340" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#ff9ab5" stop-opacity="0.75"/>
-        <stop offset="1" stop-color="#ffe3ec" stop-opacity="0.85"/>
-      </linearGradient>
-      <linearGradient id="g4" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#fff0f5" stop-opacity="0.95"/>
-        <stop offset="1" stop-color="#ffd1df" stop-opacity="0.95"/>
-      </linearGradient>
-    </defs>
-    <g opacity="0.85">
-      <path d="M90 70l10 22 24 3-18 15 6 23-22-12-22 12 6-23-18-15 24-3z" fill="url(#g4)"/>
-      <path d="M140 150l7 16 18 2-13 11 4 17-16-9-16 9 4-17-13-11 18-2z" fill="url(#g4)"/>
-      <circle cx="210" cy="86" r="12" fill="url(#g4)"/>
-      <circle cx="260" cy="140" r="10" fill="url(#g4)"/>
-    </g>
-    <path d="M310 240c80-70 170-80 230-40-60 70-150 130-240 130-30 0-56-6-82-20 34-10 62-30 92-70z"
-          fill="url(#g3)" opacity="0.9" />
-  </svg>
+<div class="panel">
+
+<h3>生成结果</h3>
+
+<div id="output" class="result"></div>
+
+<br>
+
+<button onclick="copyFeishu()">复制飞书格式</button>
+
 </div>
 
-<!-- Topbar -->
-<div class="topbar">
-  <div class="topbar-left">
-    <div class="topbar-logo">K</div>
-    <div>
-      <div class="topbar-title">Hello Kitty · 任务卡工作台 v3（DashScope）</div>
-      <div class="topbar-sub">简单任务 & 复杂任务 · 任务卡生成 / 标题提炼 / brief完整度校验</div>
-    </div>
-  </div>
-
-  <div class="topbar-right">
-    <span class="badge">本机存储 · 无服务器</span>
-
-    <div class="control" title="三种布局你都能体验：Tab / 上下 / 左右">
-      <span>布局</span>
-      <select id="layoutSelect">
-        <option value="tabs">Tab 切换</option>
-        <option value="vertical">上下分区</option>
-        <option value="horizontal">左右分区</option>
-      </select>
-    </div>
-
-    <button class="theme-toggle" id="themeToggleBtn">🧸 夜灯模式</button>
-  </div>
-</div>
-
-<div class="page">
-  <div class="page-subtitle">🎀 说明：简单/复杂是两套独立工作台，你自行判定任务类型，把内容粘贴到对应区域即可。</div>
-
-  <!-- API -->
-  <div class="card" style="margin-bottom:14px;">
-    <div class="card-header">
-      <div class="card-title">🔐 DashScope API Key & 模型设置</div>
-      <div class="tiny">复杂任务可用更强模型；简单任务默认 qwen-plus</div>
-    </div>
-
-    <div class="api-key-box">
-      <div class="api-key-title">🔐 API Key 设置 <span class="api-key-sub">（仅首次需要）</span></div>
-      <input id="apiKey" type="password" placeholder="无需填写（在 Vercel 设置 DASHSCOPE_API_KEY）" disabled />
-      <div class="api-key-actions">
-        <button class="btn-secondary" id="saveKeyBtn" disabled>💾 保存</button>
-        <button class="btn-ghost" id="clearKeyBtn" disabled>🧹 清除</button>
-        <span class="api-key-tip">已改为后端转发：Key 存在 Vercel 环境变量，不会暴露在浏览器</span>
-      </div>
-    </div>
-
-    <div class="btn-row" style="margin-top:10px;">
-      <span class="pill">简单任务模型（DashScope）</span>
-      <span class="tiny">固定：</span>
-      <span class="badge" style="padding:3px 10px;">qwen-plus</span>
-
-      <span style="width:10px;"></span>
-
-      <span class="pill">复杂任务模型（DashScope）</span>
-      <input id="complexModel" type="text" value="qwen-plus" style="min-width:240px;" />
-      <span class="tiny">可改为：gpt-4.1 / qwen-plus（或你们内部规定的更强型号）</span>
-      <button class="btn-secondary" id="saveModelBtn">💾 保存模型</button>
-    </div>
-
-    <div class="status" id="statusText"></div>
-  </div>
-
-  <!-- Layout Tabs -->
-  <div class="tabs" id="tabsBar">
-    <button class="tab-btn active" data-tab="simple">🌸 简单任务</button>
-    <button class="tab-btn" data-tab="complex">🎯 复杂任务</button>
-  </div>
-
-  <div class="workspace-wrap" id="workspaceWrap">
-    <div class="workspace-grid" id="workspaceGrid">
-
-      <!-- Simple workspace -->
-      <div class="card workspace-card active" id="wsSimple">
-        <div class="card-header">
-          <div class="card-title">🌸 简单任务工作台</div>
-          <div class="badge">适配：单一目标 · 明确交付</div>
-        </div>
-
-        <div>
-          <div class="brief-label">📝 原始任务 / brief <span>粘贴 CEO / 会议 / 语音整理内容</span></div>
-          <textarea id="rawInputSimple" placeholder="例如：在月度经营会上，CEO 提出需要拆分渠道分析会和公司级经营会…"></textarea>
-        </div>
-
-        <div class="btn-row" style="margin-top:12px;">
-          <button class="btn-primary" id="btnStandardizeSimple">🚀 生成标准化任务卡</button>
-          <button class="btn-secondary" id="btnTitleFromTaskSimple">🧠 从任务卡提炼标题</button>
-          <button class="btn-secondary" id="btnCheckSimple">🧩 brief完整度校验</button>
-          <span class="pill">提示词已内置</span>
-          <span class="action-tip">建议先生成任务卡，再提炼标题</span>
-        </div>
-
-        <div class="result-grid">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">📋 标准化任务卡（简单）</div>
-              <button class="btn-ghost" id="copyTaskBtnSimple">📎 复制</button>
-            </div>
-            <div class="result-box" id="taskOutputSimple">（点击「生成标准化任务卡」后在此展示结果）</div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">🧠 标题候选（≤30字）</div>
-              <button class="btn-ghost" id="copyTitleBtnSimple">📎 复制</button>
-            </div>
-            <div class="result-box" id="titleOutputSimple">（先生成任务卡，再点击「从任务卡提炼标题」；点击某条标题可直接复制）</div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">✅ brief完整度校验（简单）</div>
-              <button class="btn-ghost" id="copyCheckBtnSimple">📎 复制</button>
-            </div>
-            <div class="result-box" id="checkOutputSimple">（点击「brief完整度校验」后在此展示结果）</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Complex workspace -->
-      <div class="card workspace-card" id="wsComplex">
-        <div class="card-header">
-          <div class="card-title">🎯 复杂任务工作台</div>
-          <div class="badge">适配：多目标/多干系人 · 需要边界&成功画面</div>
-        </div>
-
-        <div>
-          <div class="brief-label">📝 原始任务 / brief <span>把复杂任务相关信息都粘贴在这里（你们自行识别）</span></div>
-          <textarea id="rawInputComplex" placeholder="例如：双舱产品重新概念&命名，需要让消费者更能Get…（可包含背景、限制、成功画面等）"></textarea>
-        </div>
-
-        <div class="btn-row" style="margin-top:12px;">
-          <button class="btn-primary" id="btnStandardizeComplex">🚀 生成标准化任务卡</button>
-          <button class="btn-secondary" id="btnTitleFromTaskComplex">🧠 从任务卡提炼标题</button>
-          <button class="btn-secondary" id="btnCheckComplex">🧩 brief完整度校验</button>
-          <span class="pill">提示词已内置</span>
-          <span class="action-tip">行动会强制包含 Owner & DDL</span>
-        </div>
-
-        <div class="result-grid">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">📋 标准化任务卡（复杂）</div>
-              <button class="btn-ghost" id="copyTaskBtnComplex">📎 复制</button>
-            </div>
-            <div class="result-box" id="taskOutputComplex">（点击「生成标准化任务卡」后在此展示结果）</div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">🧠 标题候选（≤30字）</div>
-              <button class="btn-ghost" id="copyTitleBtnComplex">📎 复制</button>
-            </div>
-            <div class="result-box" id="titleOutputComplex">（先生成任务卡，再点击「从任务卡提炼标题」；点击某条标题可直接复制）</div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">✅ brief完整度校验（复杂）</div>
-              <button class="btn-ghost" id="copyCheckBtnComplex">📎 复制</button>
-            </div>
-            <div class="result-box" id="checkOutputComplex">（点击「brief完整度校验」后在此展示结果）</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- History drawer toggle -->
-<button class="history-drawer-toggle" id="historyToggleBtn">
-  <span class="icon">🕒</span> 历史任务 <span id="historyToggleArrow">▸</span>
-</button>
-
-<!-- History drawer -->
-<div class="history-drawer" id="historyDrawer">
-  <div class="history-drawer-header">
-    <div class="history-drawer-title">🕒 历史任务 <span class="tag">按简单/复杂区分</span></div>
-    <button class="btn-ghost" id="closeHistoryBtn">✕</button>
-  </div>
-  <div class="history-drawer-sub">点击一条记录可回填到对应工作台～</div>
-  <div class="history-drawer-body">
-    <div class="btn-row" style="margin:2px 0 6px;">
-      <button class="btn-ghost" id="refreshHistoryBtn">🔄 刷新</button>
-      <button class="btn-ghost" id="clearHistoryBtn">🗑 清空</button>
-    </div>
-    <div id="historyList" class="history-list">
-      <div class="history-empty">暂无历史记录</div>
-    </div>
-  </div>
 </div>
 
 <script>
-  // ===== DOM =====
-  const apiKeyInput = document.getElementById('apiKey');
-  const saveKeyBtn = document.getElementById('saveKeyBtn');
-  const clearKeyBtn = document.getElementById('clearKeyBtn');
-  const statusText = document.getElementById('statusText');
 
-  const layoutSelect = document.getElementById('layoutSelect');
-  const tabsBar = document.getElementById('tabsBar');
-  const workspaceWrap = document.getElementById('workspaceWrap');
-  const wsSimple = document.getElementById('wsSimple');
-  const wsComplex = document.getElementById('wsComplex');
+const HISTORY_RULES = `
+任务卡写作规则：
+
+简单任务：
+背景一句话
+目的说明为什么做
+行动1-3条
+成果定义明确
+结束标准可关闭
+
+复杂任务：
+战略意图说明为什么做
+底层逻辑体现因果链
+成功画面可观察
+边界提醒说明限制
+行动包含Owner与DDL
+`;
 
-  const rawInputSimple = document.getElementById('rawInputSimple');
-  const taskOutputSimple = document.getElementById('taskOutputSimple');
-  const titleOutputSimple = document.getElementById('titleOutputSimple');
-  const checkOutputSimple = document.getElementById('checkOutputSimple');
+const HISTORY_EXAMPLES = `
 
-  const rawInputComplex = document.getElementById('rawInputComplex');
-  const taskOutputComplex = document.getElementById('taskOutputComplex');
-  const titleOutputComplex = document.getElementById('titleOutputComplex');
-  const checkOutputComplex = document.getElementById('checkOutputComplex');
+历史简单任务示例：
 
-  const btnStandardizeSimple = document.getElementById('btnStandardizeSimple');
-  const btnTitleFromTaskSimple = document.getElementById('btnTitleFromTaskSimple');
-  const btnCheckSimple = document.getElementById('btnCheckSimple');
+案例1：
+背景：BI工具能力依赖数据团队，导致生产力瓶颈。
+目的：培养业务同学自助分析能力。
+行动：
+1.筛选业务同学
+2.完成BI教学
+成果定义：业务同学可独立分析数据
+结束标准：5名业务同学具备能力
 
-  const btnStandardizeComplex = document.getElementById('btnStandardizeComplex');
-  const btnTitleFromTaskComplex = document.getElementById('btnTitleFromTaskComplex');
-  const btnCheckComplex = document.getElementById('btnCheckComplex');
+案例2：
+背景：电器产品能力不足。
+目的：补齐研发能力。
+行动：
+1.对齐研发产品供应链
+2.制定人才招聘方案
+成果定义：形成能力建设方案
+结束标准：确认方案并启动招聘
 
-  const copyTaskBtnSimple = document.getElementById('copyTaskBtnSimple');
-  const copyTitleBtnSimple = document.getElementById('copyTitleBtnSimple');
-  const copyCheckBtnSimple = document.getElementById('copyCheckBtnSimple');
 
-  const copyTaskBtnComplex = document.getElementById('copyTaskBtnComplex');
-  const copyTitleBtnComplex = document.getElementById('copyTitleBtnComplex');
-  const copyCheckBtnComplex = document.getElementById('copyCheckBtnComplex');
+历史复杂任务示例：
 
-  const historyToggleBtn = document.getElementById('historyToggleBtn');
-  const historyToggleArrow = document.getElementById('historyToggleArrow');
-  const historyDrawer = document.getElementById('historyDrawer');
-  const closeHistoryBtn = document.getElementById('closeHistoryBtn');
-  const historyListEl = document.getElementById('historyList');
-  const refreshHistoryBtn = document.getElementById('refreshHistoryBtn');
-  const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+案例1：
+战略意图：升级战略地图支持策略制定。
+底层逻辑：
+1.数据分析不完整
+2.渠道策略需要支持
+成功画面：
+战略地图完整
+边界提醒：
+不展开所有品类
+背景：凝胶会议提出需求
+行动：
+Owner:XX DDL:XX 梳理渠道数据
 
-  const themeToggleBtn = document.getElementById('themeToggleBtn');
+案例2：
+战略意图：建立除甲醛第一品牌认知。
+底层逻辑：
+消费者需要信任背书
+成功画面：
+直播间形成第一品牌心智
+边界提醒：
+表达必须合规
+背景：直播转化效率需要提升
+行动：
+Owner:XX DDL:XX 完成市场认证路径
 
-  const complexModelInput = document.getElementById('complexModel');
-  const saveModelBtn = document.getElementById('saveModelBtn');
+`;
 
-  // ===== Storage =====
-  const STORAGE_KEY_API = 'TASK_KITTY_DASHSCOPE_KEY';
-  const STORAGE_KEY_HISTORY = 'TASK_KITTY_HISTORY_V3';
-  const STORAGE_KEY_THEME = 'TASK_KITTY_THEME';
-  const STORAGE_KEY_LAYOUT = 'TASK_KITTY_LAYOUT_V3';
-  const STORAGE_KEY_COMPLEX_MODEL = 'TASK_KITTY_COMPLEX_MODEL_V3';
-  const MAX_HISTORY = 80;
+async function generate(){
 
-  // ===== Prompts =====
-  const PROMPT_STANDARDIZE_SIMPLE = `
-📥 请输出任务的标准化字段内容，需结合上下文梳理相关信息，不要引入未提及的主观臆测：
-【一、任务描述】
-① 背景（一句话）
-② 目的（一句话）
-③ 行动（列出1-3点）
+const brief=document.getElementById("brief").value;
+const model=document.getElementById("model").value;
 
-【二、成果定义】（一句话）
-明确交付物及成功标准：输出什么？达到什么标准才算成功？如原话不完整可基于常规标准合理补齐，但不能杜撰。
+const prompt = `
+${HISTORY_RULES}
 
-【三、任务结束标准】（精简一句话）
-说明在什么条件下可以 Close，是否需要 CEO 确认/会议共识/系统上线成功/数据校验通过等。
+${HISTORY_EXAMPLES}
 
-以下是原始 brief：`;
+当前任务brief：
+${brief}
 
-  const PROMPT_STANDARDIZE_COMPLEX = `
-📥 你是“复杂任务卡结构化助手”。请基于 brief 输出以下字段（必须严格按顺序输出，字段名不变），不引入主观臆测、不新增未提及事实：
-① 战略意图（一句话：为什么做/对组织的价值）
-② 底层逻辑（2-4条：关键假设/因果链/为什么这些动作能达成意图）
-③ 成功画面（2-4条：可被验收的结果描述，尽量用里程碑/指标/可观察证据表达）
-④ 边界提醒（2-4条：不做什么/不包含什么/风险前置/需要谁拍板的边界）
-⑤ 背景（一句话：来源/问题场景/触发点）
-⑥ 行动（列出 3-7 点；每点必须包含：Owner、DDL、动作、产出/里程碑。格式示例：
-- Owner：XX｜DDL：YYYY-MM-DD｜动作：…｜产出：…）
+请按照历史任务卡逻辑生成完整任务卡
+`;
 
-以下是原始 brief：`;
+const res=await fetch("/api/dashscope",{
+method:"POST",
+headers:{ "Content-Type":"application/json"},
+body:JSON.stringify({
+model:model,
+prompt:prompt,
+temperature:0.2
+})
+});
 
-  const PROMPT_TITLE_FROM_TASK = `
-请基于以下「标准化任务卡内容」，提炼 2-3 个任务卡标题候选，要求：
-- 每条标题不超过 30 个字（必须严格遵守）
-- 标题要能概括“对象 + 动作 + 交付物/范围”（尽量包含，但不要变长）
-- 不要引入任务卡未出现的新信息
-- 避免空泛词（如“优化/提升/跟进”单独出现）
-- 输出格式必须严格为：
-1) ...
-2) ...
-3) ...
-以下是标准化任务卡：`;
+const data=await res.json();
 
-  const PROMPT_CHECK_SIMPLE = `
-请你作为「任务描述校验助手」，根据 brief 内容：
-✔ 判断逻辑
-若 brief 明确 → 直接回复：“brief完整，可执行”
-若 brief 不明确 → 请仅输出以下三项（保持极简）：
-- 缺少项：（逐条指出 brief 缺少哪些必要信息）
-- CEO需确认：（哪些关键点需要 CEO 明确）
-- 建议补充：（一句话轻提示，不做扩展和决策）
+document.getElementById("output").innerText=data.content || data.error;
 
-✔ 校验标准（仅判断两点）
-1) 成果定义是否清晰（最终要产出什么？呈现形式是什么？）
-2) 交付标准是否明确（什么条件下算完成？是否可验收？）
+}
 
-以下是 brief 内容：`;
+function copyFeishu(){
 
-  const PROMPT_CHECK_COMPLEX = `
-请你作为「复杂任务 brief 完整度校验助手」，根据 brief 内容进行校验：
-✔ 判断逻辑
-若 brief 足够完整 → 直接回复：“brief完整，可执行（复杂任务）”
-若 brief 不完整 → 只输出以下三项（保持极简）：
-- 缺少项：（逐条指出缺少哪些关键字段/信息）
-- CEO需确认：（必须由CEO/关键决策者拍板的点）
-- 建议补充：（一句话轻提示，不做扩展）
+const text=document.getElementById("output").innerText;
 
-✔ 校验维度（升级全量校验）
-1) 战略意图是否明确（为什么做/价值）
-2) 底层逻辑是否自洽（关键假设/因果链）
-3) 成功画面是否可验收（指标/里程碑/证据）
-4) 边界是否清楚（不做什么/风险/拍板点）
-5) 背景是否充分（来源/场景/约束）
-6) 行动是否可执行（是否包含 Owner & DDL & 产出里程碑）
+const feishu = `## 任务卡\n\n${text}`;
 
-以下是 brief 内容：`;
+navigator.clipboard.writeText(feishu);
 
-  // ===== helpers =====
-  function setStatus(msg){ statusText.textContent = msg || ''; }
+alert("已复制为飞书格式");
 
-  function setLoading(loading){
-    const buttons = [
-      btnStandardizeSimple, btnTitleFromTaskSimple, btnCheckSimple,
-      btnStandardizeComplex, btnTitleFromTaskComplex, btnCheckComplex
-    ];
-    buttons.forEach(b => b.disabled = loading);
-  }
+}
 
-  function loadApiKey(){
-    const key = localStorage.getItem(STORAGE_KEY_API) || '';
-    apiKeyInput.value = key;
-  }
-  function saveApiKey(){
-    const val = (apiKeyInput.value || '').trim();
-    if(!val){ alert('请输入有效的 API Key'); return; }
-    localStorage.setItem(STORAGE_KEY_API, val);
-    setStatus('✅ API Key 已保存（仅存于本机浏览器）');
-  }
-  function clearApiKey(){
-    localStorage.removeItem(STORAGE_KEY_API);
-    apiKeyInput.value = '';
-    setStatus('🧹 API Key 已清除。');
-  }
-
-  function loadComplexModel(){
-    const m = localStorage.getItem(STORAGE_KEY_COMPLEX_MODEL) || (complexModelInput.value || '').trim() || 'gpt-4.1';
-    complexModelInput.value = m;
-  }
-  function saveComplexModel(){
-    const m = (complexModelInput.value || '').trim();
-    if(!m){ alert('请输入复杂任务模型（DashScope）名称'); return; }
-    localStorage.setItem(STORAGE_KEY_COMPLEX_MODEL, m);
-    setStatus(`✅ 复杂任务模型（DashScope）已保存：${m}`);
-  }
-
-  function readHistory(){
-    try{
-      const raw = localStorage.getItem(STORAGE_KEY_HISTORY);
-      if(!raw) return [];
-      const arr = JSON.parse(raw);
-      return Array.isArray(arr) ? arr : [];
-    }catch{ return []; }
-  }
-  function writeHistory(list){
-    localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(list.slice(0, MAX_HISTORY)));
-  }
-  function saveHistoryEntry(mode, type){
-    // mode: simple|complex
-    const inputEl = mode === 'simple' ? rawInputSimple : rawInputComplex;
-    const taskEl  = mode === 'simple' ? taskOutputSimple : taskOutputComplex;
-    const titleEl = mode === 'simple' ? titleOutputSimple : titleOutputComplex;
-    const checkEl = mode === 'simple' ? checkOutputSimple : checkOutputComplex;
-
-    const input = (inputEl.value || '').trim();
-    if(!input) return;
-
-    const history = readHistory();
-    const now = new Date();
-    const entry = {
-      id: Date.now(),
-      time: now.toLocaleString(),
-      mode,
-      type,
-      input,
-      task: taskEl.innerText || taskEl.textContent || '',
-      titles: titleEl.innerText || titleEl.textContent || '',
-      check: checkEl.innerText || checkEl.textContent || ''
-    };
-    history.unshift(entry);
-    writeHistory(history);
-    renderHistory();
-  }
-
-  function renderHistory(){
-    const history = readHistory();
-    historyListEl.innerHTML = '';
-
-    if(!history.length){
-      const empty = document.createElement('div');
-      empty.className = 'history-empty';
-      empty.textContent = '暂无历史记录';
-      historyListEl.appendChild(empty);
-      return;
-    }
-
-    history.forEach(entry=>{
-      const item = document.createElement('div');
-      item.className = 'history-item';
-
-      const title = document.createElement('div');
-      title.className = 'history-title';
-
-      const tagType = entry.type === 'standardize' ? '任务卡'
-                    : entry.type === 'title_from_task' ? '标题'
-                    : entry.type === 'check' ? '校验'
-                    : '任务';
-
-      const tagMode = entry.mode === 'complex' ? '复杂' : '简单';
-
-      title.textContent = `【${tagMode}/${tagType}】${entry.input.slice(0, 26)}${entry.input.length > 26 ? '…' : ''}`;
-
-      const meta = document.createElement('div');
-      meta.className = 'history-meta';
-      const pill1 = document.createElement('span');
-      pill1.className = 'tag';
-      pill1.textContent = tagMode;
-      const pill2 = document.createElement('span');
-      pill2.className = 'tag';
-      pill2.textContent = tagType;
-      const time = document.createElement('span');
-      time.textContent = entry.time;
-
-      meta.appendChild(pill1);
-      meta.appendChild(pill2);
-      meta.appendChild(time);
-
-      item.appendChild(title);
-      item.appendChild(meta);
-
-      item.addEventListener('click', ()=>{
-        if(entry.mode === 'simple'){
-          rawInputSimple.value = entry.input || '';
-          if(entry.task) taskOutputSimple.textContent = entry.task;
-          if(entry.titles) titleOutputSimple.textContent = entry.titles;
-          if(entry.check) checkOutputSimple.textContent = entry.check;
-          setStatus('💗 已从历史记录回填到【简单任务】。');
-          // 在 tabs 模式下切到 simple
-          if(currentLayout() === 'tabs') activateTab('simple');
-        }else{
-          rawInputComplex.value = entry.input || '';
-          if(entry.task) taskOutputComplex.textContent = entry.task;
-          if(entry.titles) titleOutputComplex.textContent = entry.titles;
-          if(entry.check) checkOutputComplex.textContent = entry.check;
-          setStatus('💗 已从历史记录回填到【复杂任务】。');
-          if(currentLayout() === 'tabs') activateTab('complex');
-        }
-      });
-
-      historyListEl.appendChild(item);
-    });
-  }
-
-  async function copyText(text, label){
-    if(!text || !text.trim()){ alert(`没有可复制的${label || '内容'}`); return; }
-    try{
-      await navigator.clipboard.writeText(text);
-      setStatus(`📎 ${label || '内容'}已复制到剪贴板～`);
-    }catch(e){
-      console.error(e);
-      alert('复制失败，可尝试手动选择文本复制。');
-    }
-  }
-
-  // ===== Title rendering =====
-  function parseTitleLines(text){
-    const lines = (text || '')
-      .split('\\n')
-      .map(s => s.trim())
-      .filter(Boolean);
-
-    const picked = [];
-    for(const line of lines){
-      const m = line.match(/^\\s*(?:\\d+[\\)\\.、]|[-•])\\s*(.+)\\s*$/);
-      const t = (m ? m[1] : line).trim();
-      if(t) picked.push(t);
-      if(picked.length >= 3) break;
-    }
-    return picked.length ? picked : lines.slice(0,3);
-  }
-
-  function truncateTo30Chars(s){
-    const str = (s || '').trim();
-    if(str.length <= 30) return str;
-    return str.slice(0, 30);
-  }
-
-  function renderTitleCandidates(containerEl, candidates){
-    if(!candidates || !candidates.length){
-      containerEl.textContent = '(无标题候选)';
-      return;
-    }
-
-    containerEl.innerHTML = '';
-    candidates.forEach((t, idx) => {
-      const safe = truncateTo30Chars(t);
-      const div = document.createElement('div');
-      div.style.cursor = 'pointer';
-      div.style.padding = '6px 6px';
-      div.style.borderRadius = '10px';
-      div.style.marginBottom = '6px';
-      div.style.border = '1px solid rgba(255,111,145,0.28)';
-      div.style.background = 'rgba(255, 240, 246, 0.75)';
-      div.textContent = `${idx + 1}) ${safe}（${safe.length}/30）`;
-
-      div.addEventListener('click', async ()=>{
-        await copyText(safe, '标题');
-      });
-
-      containerEl.appendChild(div);
-    });
-  }
-
-  // ===== OpenAI call =====
-  async function callDashScope(prompt, modelName){
-    // 通过 Vercel 后端 /api/dashscope 转发调用（避免浏览器 CORS/Failed to fetch）
-    const resp = await fetch("/api/dashscope", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: modelName,
-        prompt: prompt,
-        temperature: 0.2
-      })
-    });
-
-    const text = await resp.text();
-    let json;
-    try{ json = JSON.parse(text); }catch{ json = null; }
-
-    if(!resp.ok){
-      const msg = json?.message || json?.Message || json?.error || text || `HTTP ${resp.status}`;
-      throw new Error(`API 调用失败：HTTP ${resp.status}｜${msg}`);
-    }
-
-    return json?.content || '';
-  }
-
-  function isPlaceholder(text){
-    const t = (text || '').trim();
-    return (!t || t.includes('点击「生成标准化任务卡」') || t === '生成中…' || t.includes('生成失败'));
-  }
-
-  async function handleStandardize(mode){
-    const inputEl = mode === 'simple' ? rawInputSimple : rawInputComplex;
-    const taskEl  = mode === 'simple' ? taskOutputSimple : taskOutputComplex;
-    const input = (inputEl.value || '').trim();
-    if(!input){ alert('请先输入原始任务 / brief 文本'); return; }
-
-    setLoading(true);
-    setStatus(mode === 'simple' ? '🎀 正在生成【简单任务】任务卡…' : '🎯 正在生成【复杂任务】任务卡…');
-    taskEl.textContent = '生成中…';
-
-    try{
-      const modelName = mode === 'simple'
-        ? 'qwen-plus'
-        : (localStorage.getItem(STORAGE_KEY_COMPLEX_MODEL) || complexModelInput.value.trim() || 'gpt-4.1');
-
-      const prompt = (mode === 'simple' ? PROMPT_STANDARDIZE_SIMPLE : PROMPT_STANDARDIZE_COMPLEX) + '\n\n' + input;
-      const text = await callDashScope(prompt, modelName);
-
-      taskEl.textContent = text || '(无返回内容)';
-      setStatus('✅ 任务卡已生成，可复制或保存～');
-      saveHistoryEntry(mode, 'standardize');
-    }catch(e){
-      console.error(e);
-      taskEl.textContent = '生成失败，请检查网络或 API Key。';
-      setStatus('❗ 调用失败，请检查 DashScope Key / 网络 / 模型名称是否开通。');
-    }finally{
-      setLoading(false);
-    }
-  }
-
-  async function handleTitleFromTask(mode){
-    const taskEl  = mode === 'simple' ? taskOutputSimple : taskOutputComplex;
-    const titleEl = mode === 'simple' ? titleOutputSimple : titleOutputComplex;
-    const taskText = (taskEl.innerText || taskEl.textContent || '').trim();
-
-    if(isPlaceholder(taskText)){
-      alert('请先生成标准化任务卡，再从任务卡提炼标题～');
-      return;
-    }
-
-    setLoading(true);
-    setStatus('🧠 正在从任务卡提炼标题（≤30字）…');
-    titleEl.textContent = '生成中…';
-
-    try{
-      const modelName = mode === 'simple'
-        ? 'qwen-plus'
-        : (localStorage.getItem(STORAGE_KEY_COMPLEX_MODEL) || complexModelInput.value.trim() || 'gpt-4.1');
-
-      const text = await callDashScope(PROMPT_TITLE_FROM_TASK + '\n\n' + taskText, modelName);
-      const candidates = parseTitleLines(text).map(truncateTo30Chars);
-      renderTitleCandidates(titleEl, candidates);
-      setStatus('✅ 标题候选已生成（点击某条可复制）～');
-      saveHistoryEntry(mode, 'title_from_task');
-    }catch(e){
-      console.error(e);
-      titleEl.textContent = '生成失败，请检查网络或 API Key。';
-      setStatus('❗ 调用失败，请检查 DashScope Key / 网络 / 模型名称是否开通。');
-    }finally{
-      setLoading(false);
-    }
-  }
-
-  async function handleCheck(mode){
-    const inputEl = mode === 'simple' ? rawInputSimple : rawInputComplex;
-    const checkEl = mode === 'simple' ? checkOutputSimple : checkOutputComplex;
-    const input = (inputEl.value || '').trim();
-    if(!input){ alert('请先输入原始任务 / brief 文本'); return; }
-
-    setLoading(true);
-    setStatus(mode === 'simple' ? '🧸 正在校验【简单任务】brief…' : '🧩 正在校验【复杂任务】brief…');
-    checkEl.textContent = '校验中…';
-
-    try{
-      const modelName = mode === 'simple'
-        ? 'qwen-plus'
-        : (localStorage.getItem(STORAGE_KEY_COMPLEX_MODEL) || complexModelInput.value.trim() || 'gpt-4.1');
-
-      const prompt = (mode === 'simple' ? PROMPT_CHECK_SIMPLE : PROMPT_CHECK_COMPLEX) + '\n\n' + input;
-      const text = await callDashScope(prompt, modelName);
-
-      checkEl.textContent = text || '(无返回内容)';
-      setStatus('✅ brief完整度校验完成～');
-      saveHistoryEntry(mode, 'check');
-    }catch(e){
-      console.error(e);
-      checkEl.textContent = '校验失败，请检查网络或 API Key。';
-      setStatus('❗ 调用失败，请检查 DashScope Key / 网络 / 模型名称是否开通。');
-    }finally{
-      setLoading(false);
-    }
-  }
-
-  // ===== History drawer =====
-  function openHistory(){
-    historyDrawer.style.display = 'flex';
-    historyToggleArrow.textContent = '▾';
-  }
-  function closeHistory(){
-    historyDrawer.style.display = 'none';
-    historyToggleArrow.textContent = '▸';
-  }
-  historyToggleBtn.addEventListener('click', ()=>{
-    const visible = historyDrawer.style.display === 'flex';
-    visible ? closeHistory() : openHistory();
-  });
-  closeHistoryBtn.addEventListener('click', closeHistory);
-
-  // ===== Theme =====
-  function setTheme(mode){
-    const root = document.documentElement;
-    if(mode === 'kitty-night'){
-      root.setAttribute('data-theme','kitty-night');
-      themeToggleBtn.textContent = '🌙 日间模式';
-      localStorage.setItem(STORAGE_KEY_THEME, 'kitty-night');
-    }else{
-      root.removeAttribute('data-theme');
-      themeToggleBtn.textContent = '🧸 夜灯模式';
-      localStorage.setItem(STORAGE_KEY_THEME, 'kitty-day');
-    }
-  }
-  function initTheme(){
-    const saved = localStorage.getItem(STORAGE_KEY_THEME) || 'kitty-day';
-    setTheme(saved === 'kitty-night' ? 'kitty-night' : 'kitty-day');
-  }
-  themeToggleBtn.addEventListener('click', ()=>{
-    const isNight = document.documentElement.getAttribute('data-theme') === 'kitty-night';
-    setTheme(isNight ? 'kitty-day' : 'kitty-night');
-  });
-
-  // ===== Layout (tabs/vertical/horizontal) =====
-  function currentLayout(){ return layoutSelect.value; }
-
-  function applyLayout(mode){
-    workspaceWrap.classList.remove('mode-tabs','mode-vertical','mode-horizontal');
-    if(mode === 'tabs') workspaceWrap.classList.add('mode-tabs');
-    if(mode === 'vertical') workspaceWrap.classList.add('mode-vertical');
-    if(mode === 'horizontal') workspaceWrap.classList.add('mode-horizontal');
-
-    localStorage.setItem(STORAGE_KEY_LAYOUT, mode);
-
-    // tabs visibility
-    if(mode === 'tabs'){
-      tabsBar.style.display = 'flex';
-      // keep current active
-      const active = document.querySelector('.tab-btn.active')?.getAttribute('data-tab') || 'simple';
-      activateTab(active);
-    }else{
-      tabsBar.style.display = 'none';
-      wsSimple.classList.add('active');
-      wsComplex.classList.add('active');
-    }
-  }
-
-  function activateTab(tab){
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    tabBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === tab));
-
-    wsSimple.classList.toggle('active', tab === 'simple');
-    wsComplex.classList.toggle('active', tab === 'complex');
-  }
-
-  function initLayout(){
-    const saved = localStorage.getItem(STORAGE_KEY_LAYOUT) || 'tabs';
-    layoutSelect.value = saved;
-    applyLayout(saved);
-  }
-
-  layoutSelect.addEventListener('change', ()=> applyLayout(layoutSelect.value));
-  document.querySelectorAll('.tab-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=> activateTab(btn.getAttribute('data-tab')));
-  });
-
-  // ===== events =====
-  saveKeyBtn.addEventListener('click', saveApiKey);
-  clearKeyBtn.addEventListener('click', clearApiKey);
-
-  saveModelBtn.addEventListener('click', saveComplexModel);
-
-  btnStandardizeSimple.addEventListener('click', ()=> handleStandardize('simple'));
-  btnTitleFromTaskSimple.addEventListener('click', ()=> handleTitleFromTask('simple'));
-  btnCheckSimple.addEventListener('click', ()=> handleCheck('simple'));
-
-  btnStandardizeComplex.addEventListener('click', ()=> handleStandardize('complex'));
-  btnTitleFromTaskComplex.addEventListener('click', ()=> handleTitleFromTask('complex'));
-  btnCheckComplex.addEventListener('click', ()=> handleCheck('complex'));
-
-  copyTaskBtnSimple.addEventListener('click', ()=>copyText(taskOutputSimple.textContent, '任务卡（简单）'));
-  copyTitleBtnSimple.addEventListener('click', ()=>copyText(titleOutputSimple.innerText || titleOutputSimple.textContent, '标题候选（简单）'));
-  copyCheckBtnSimple.addEventListener('click', ()=>copyText(checkOutputSimple.textContent, '校验结果（简单）'));
-
-  copyTaskBtnComplex.addEventListener('click', ()=>copyText(taskOutputComplex.textContent, '任务卡（复杂）'));
-  copyTitleBtnComplex.addEventListener('click', ()=>copyText(titleOutputComplex.innerText || titleOutputComplex.textContent, '标题候选（复杂）'));
-  copyCheckBtnComplex.addEventListener('click', ()=>copyText(checkOutputComplex.textContent, '校验结果（复杂）'));
-
-  refreshHistoryBtn.addEventListener('click', renderHistory);
-  clearHistoryBtn.addEventListener('click', ()=>{
-    if(confirm('确定要清空所有历史记录吗？（简单&复杂都会清空）')){
-      localStorage.removeItem(STORAGE_KEY_HISTORY);
-      renderHistory();
-      setStatus('🗑 历史记录已清空。');
-    }
-  });
-
-  // ===== init =====
-  initTheme();
-  loadApiKey();
-  loadComplexModel();
-  initLayout();
-  renderHistory();
 </script>
+
 </body>
 </html>
