@@ -81,7 +81,6 @@
   html[data-theme="dark"] .topbar {
     background: rgba(17,24,39,0.88);
   }
-
   .topbar-left{ display:flex; align-items:center; gap:10px; }
   .topbar-logo{
     width:34px;height:34px;border-radius:10px;
@@ -113,7 +112,6 @@
     position: relative;
     z-index: 5;
   }
-
   .page-subtitle{
     font-size:13px;
     color:var(--text-sub);
@@ -155,7 +153,6 @@
     box-shadow: var(--shadow-soft);
     padding: 16px 16px 14px;
   }
-
   .card-header{
     display:flex;
     align-items:center;
@@ -175,7 +172,6 @@
     display:flex; align-items:center; gap:8px;
     font-size:12px; color:var(--text-sub); font-weight:800;
   }
-
   select, input[type="text"]{
     border-radius: 999px;
     border: 1px solid var(--border);
@@ -203,7 +199,6 @@
     background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(17,24,39,0.92));
     border: 1px dashed rgba(148,163,184,0.25);
   }
-
   .api-key-title{
     font-size:12px;
     font-weight:900;
@@ -607,7 +602,6 @@
 
 <body>
 
-<!-- Topbar -->
 <div class="topbar">
   <div class="topbar-left">
     <div class="topbar-logo">TC</div>
@@ -641,12 +635,11 @@
     <div>
       <div class="enhance-banner-title">历史任务增强模式已启用</div>
       <div class="enhance-banner-desc">
-        系统会参考你过往任务卡中的写法逻辑与典型示例，提升新任务 brief 结构化输出的精准度与内部任务卡风格一致性。
+        系统会参考历史任务中的背景、目的、行动、成果定义、任务结束标准，以及复杂任务中的战略意图、底层逻辑、成功画面、边界提醒与行动结构，提升新任务输出的精准度与内部任务卡风格一致性。
       </div>
     </div>
   </div>
 
-  <!-- API -->
   <div class="card" style="margin-bottom:14px;">
     <div class="card-header">
       <div class="card-title">🔐 AIHubMix 模型设置</div>
@@ -691,7 +684,6 @@
     <div class="status" id="statusText"></div>
   </div>
 
-  <!-- Layout Tabs -->
   <div class="tabs" id="tabsBar">
     <button class="tab-btn active" data-tab="simple">简单任务</button>
     <button class="tab-btn" data-tab="complex">复杂任务</button>
@@ -700,7 +692,6 @@
   <div class="workspace-wrap" id="workspaceWrap">
     <div class="workspace-grid" id="workspaceGrid">
 
-      <!-- Simple workspace -->
       <div class="card workspace-card active" id="wsSimple">
         <div class="card-header">
           <div class="card-title">简单任务工作台</div>
@@ -724,7 +715,10 @@
           <div class="card">
             <div class="card-header">
               <div class="card-title">标准化任务卡（简单）</div>
-              <button class="btn-ghost" id="copyTaskBtnSimple">复制</button>
+              <div class="btn-row">
+                <button class="btn-ghost" id="copyTaskBtnSimple">复制</button>
+                <button class="btn-ghost" id="copyFeishuTaskBtnSimple">飞书格式</button>
+              </div>
             </div>
             <div class="result-box" id="taskOutputSimple">（点击「生成标准化任务卡」后在此展示结果）</div>
           </div>
@@ -732,7 +726,10 @@
           <div class="card">
             <div class="card-header">
               <div class="card-title">标题候选（≤30字）</div>
-              <button class="btn-ghost" id="copyTitleBtnSimple">复制</button>
+              <div class="btn-row">
+                <button class="btn-ghost" id="copyTitleBtnSimple">复制</button>
+                <button class="btn-ghost" id="copyFeishuTitleBtnSimple">飞书格式</button>
+              </div>
             </div>
             <div class="result-box" id="titleOutputSimple">（先生成任务卡，再点击「从任务卡提炼标题」；点击某条标题可直接复制）</div>
           </div>
@@ -740,14 +737,16 @@
           <div class="card">
             <div class="card-header">
               <div class="card-title">brief完整度校验（简单）</div>
-              <button class="btn-ghost" id="copyCheckBtnSimple">复制</button>
+              <div class="btn-row">
+                <button class="btn-ghost" id="copyCheckBtnSimple">复制</button>
+                <button class="btn-ghost" id="copyFeishuCheckBtnSimple">飞书格式</button>
+              </div>
             </div>
             <div class="result-box" id="checkOutputSimple">（点击「brief完整度校验」后在此展示结果）</div>
           </div>
         </div>
       </div>
 
-      <!-- Complex workspace -->
       <div class="card workspace-card" id="wsComplex">
         <div class="card-header">
           <div class="card-title">复杂任务工作台</div>
@@ -771,7 +770,10 @@
           <div class="card">
             <div class="card-header">
               <div class="card-title">标准化任务卡（复杂）</div>
-              <button class="btn-ghost" id="copyTaskBtnComplex">复制</button>
+              <div class="btn-row">
+                <button class="btn-ghost" id="copyTaskBtnComplex">复制</button>
+                <button class="btn-ghost" id="copyFeishuTaskBtnComplex">飞书格式</button>
+              </div>
             </div>
             <div class="result-box" id="taskOutputComplex">（点击「生成标准化任务卡」后在此展示结果）</div>
           </div>
@@ -779,7 +781,10 @@
           <div class="card">
             <div class="card-header">
               <div class="card-title">标题候选（≤30字）</div>
-              <button class="btn-ghost" id="copyTitleBtnComplex">复制</button>
+              <div class="btn-row">
+                <button class="btn-ghost" id="copyTitleBtnComplex">复制</button>
+                <button class="btn-ghost" id="copyFeishuTitleBtnComplex">飞书格式</button>
+              </div>
             </div>
             <div class="result-box" id="titleOutputComplex">（先生成任务卡，再点击「从任务卡提炼标题」；点击某条标题可直接复制）</div>
           </div>
@@ -787,7 +792,10 @@
           <div class="card">
             <div class="card-header">
               <div class="card-title">brief完整度校验（复杂）</div>
-              <button class="btn-ghost" id="copyCheckBtnComplex">复制</button>
+              <div class="btn-row">
+                <button class="btn-ghost" id="copyCheckBtnComplex">复制</button>
+                <button class="btn-ghost" id="copyFeishuCheckBtnComplex">飞书格式</button>
+              </div>
             </div>
             <div class="result-box" id="checkOutputComplex">（点击「brief完整度校验」后在此展示结果）</div>
           </div>
@@ -798,18 +806,16 @@
   </div>
 </div>
 
-<!-- History drawer toggle -->
 <button class="history-drawer-toggle" id="historyToggleBtn">
   <span class="icon">🕒</span> 历史任务 <span id="historyToggleArrow">▸</span>
 </button>
 
-<!-- History drawer -->
 <div class="history-drawer" id="historyDrawer">
   <div class="history-drawer-header">
     <div class="history-drawer-title">🕒 历史任务 <span class="tag">按简单/复杂区分</span></div>
     <button class="btn-ghost" id="closeHistoryBtn">✕</button>
   </div>
-  <div class="history-drawer-sub">点击一条记录可回填到对应工作台～</div>
+  <div class="history-drawer-sub">点击一条记录可回填到对应工作台</div>
   <div class="history-drawer-body">
     <div class="btn-row" style="margin:2px 0 6px;">
       <button class="btn-ghost" id="refreshHistoryBtn">刷新</button>
@@ -822,7 +828,6 @@
 </div>
 
 <script>
-  // ===== DOM =====
   const apiKeyInput = document.getElementById('apiKey');
   const saveKeyBtn = document.getElementById('saveKeyBtn');
   const clearKeyBtn = document.getElementById('clearKeyBtn');
@@ -855,10 +860,16 @@
   const copyTaskBtnSimple = document.getElementById('copyTaskBtnSimple');
   const copyTitleBtnSimple = document.getElementById('copyTitleBtnSimple');
   const copyCheckBtnSimple = document.getElementById('copyCheckBtnSimple');
+  const copyFeishuTaskBtnSimple = document.getElementById('copyFeishuTaskBtnSimple');
+  const copyFeishuTitleBtnSimple = document.getElementById('copyFeishuTitleBtnSimple');
+  const copyFeishuCheckBtnSimple = document.getElementById('copyFeishuCheckBtnSimple');
 
   const copyTaskBtnComplex = document.getElementById('copyTaskBtnComplex');
   const copyTitleBtnComplex = document.getElementById('copyTitleBtnComplex');
   const copyCheckBtnComplex = document.getElementById('copyCheckBtnComplex');
+  const copyFeishuTaskBtnComplex = document.getElementById('copyFeishuTaskBtnComplex');
+  const copyFeishuTitleBtnComplex = document.getElementById('copyFeishuTitleBtnComplex');
+  const copyFeishuCheckBtnComplex = document.getElementById('copyFeishuCheckBtnComplex');
 
   const historyToggleBtn = document.getElementById('historyToggleBtn');
   const historyToggleArrow = document.getElementById('historyToggleArrow');
@@ -874,19 +885,17 @@
   const complexModelSelect = document.getElementById('complexModel');
   const saveModelBtn = document.getElementById('saveModelBtn');
 
-  // ===== Storage =====
-  const STORAGE_KEY_HISTORY = 'TASK_WORKBENCH_HISTORY_V4';
-  const STORAGE_KEY_THEME = 'TASK_WORKBENCH_THEME_V4';
-  const STORAGE_KEY_LAYOUT = 'TASK_WORKBENCH_LAYOUT_V4';
-  const STORAGE_KEY_SIMPLE_MODEL = 'TASK_WORKBENCH_SIMPLE_MODEL_V4';
-  const STORAGE_KEY_COMPLEX_MODEL = 'TASK_WORKBENCH_COMPLEX_MODEL_V4';
+  const STORAGE_KEY_HISTORY = 'TASK_WORKBENCH_HISTORY_V4_ALL';
+  const STORAGE_KEY_THEME = 'TASK_WORKBENCH_THEME_V4_ALL';
+  const STORAGE_KEY_LAYOUT = 'TASK_WORKBENCH_LAYOUT_V4_ALL';
+  const STORAGE_KEY_SIMPLE_MODEL = 'TASK_WORKBENCH_SIMPLE_MODEL_V4_ALL';
+  const STORAGE_KEY_COMPLEX_MODEL = 'TASK_WORKBENCH_COMPLEX_MODEL_V4_ALL';
   const MAX_HISTORY = 80;
 
-  // ===== 历史任务逻辑增强：简单任务 =====
   const SIMPLE_HISTORY_CONTEXT = `
-你是公司内部的任务卡结构化助手。请严格参考历史任务卡的写法逻辑来生成简单任务卡，确保输出像内部真实任务卡，而不是泛泛的 AI 文案。
+你是公司内部的任务卡结构化助手。请严格参考公司历史任务卡的写法逻辑来生成简单任务卡，确保输出像内部真实任务卡，而不是泛泛的AI文案。
 
-【历史简单任务写法规则】
+【历史简单任务卡写法规则】
 1. 背景：只用一句话说明任务来源、问题场景或触发原因，不展开成长篇分析。
 2. 目的：用一句话说明为什么要做这件事，强调任务价值。
 3. 行动：控制在1-3条，要求具体、可执行，避免空泛表述。
@@ -894,50 +903,87 @@
 5. 任务结束标准：必须写成“什么条件下可以Close”的判断标准。
 6. 整体风格：表达简洁、像内部任务卡，不像汇报材料，不写成长篇分析。
 
-【历史简单任务示例1｜BI工具教学任务】
-任务标题：【进行中】教会部分一线业务同学掌握BI工具可以进行简单的自助分析
-背景：Harry在日会上提出，数据底层能力已搭好，但工具模板的生产化与日常可用性仍主要依赖数据团队，形成生产力瓶颈。
-目的：通过让部分一线业务同学掌握工具使用方法，形成前线自助生成价值驱动树的能力，减轻数据团队重复制作负担，加快业务洞察速度。
-行动：
-1. 由数据团队与负责人筛选适合作为价值驱动树使用者的业务同学
-2. 完成5名以上一线业务同学的教学与实操落地
+【历史简单任务全集参考】
+1. BI工具教学任务：
+背景：数据底层能力已搭好，但工具模板的生产化与日常可用性仍依赖数据团队，形成生产力瓶颈。
+目的：让部分一线业务同学掌握工具使用方法，形成前线自助分析能力，减轻数据团队重复负担。
+行动：筛选适合的业务同学并完成教学实操。
 成果定义：形成可使用BI工具完成简单分析的一线业务同学群体。
-任务结束标准：5名以上一线业务同学具备使用BI工具简单分析数据的能力。
+结束标准：5名以上业务同学具备简单分析能力。
 
-【历史简单任务示例2｜电器能力建设任务】
-任务标题：讨论电器能力匹配与支撑：从研发→产品→供应链
-背景：电器产品对公司重要，但当前相关领域能力仍有欠缺，需要尽快补齐。
-目的：明确公司具备电器研发能力的路径及未来招聘电器端专业人才的方案，确保研发→产品→供应链能力匹配与支撑。
-行动：
-1. 与研发、产品、供应链对齐电器研发能力建设路径
-2. 明确未来招聘电器端专业人才方案
-成果定义：形成电器研发能力建设方案及人才招聘规划。
-任务结束标准：产出电器能力匹配支撑的整体方案，确认后开启人才补充。
+2. 电器能力匹配与支撑：
+背景：电器产品对公司重要，但相关能力仍有欠缺。
+目的：明确公司具备电器研发能力的路径及未来招聘电器端人才方案。
+行动：与研发、产品、供应链对齐能力建设和招聘方案。
+成果定义：形成能力建设方案及招聘规划。
+结束标准：产出整体方案并确认后开启人才补充。
 
-【历史简单任务示例3｜消费者认知验证任务】
-任务标题：验证消费者是否知道我们的除味是除装修味
-背景：当前双舱未明确标注“除装修味”，也未专门拍摄相关内容，导致消费者对除装修味认知存在疑问。
-目的：验证消费者是否理解“除装修味”的概念及其是否满足消费者需求，明确消费者对除装修味的认知和需求状况。
-行动：
-1. 调查消费者是否知道“除装修味”这一概念
-2. 分析消费者对除装修味需求的认知与真实需要
-成果定义：输出关于消费者对“除装修味”认知度及需求分析的调研报告。
-任务结束标准：完成调研与分析报告，经Harry确认后任务关闭。
+3. 消费者是否知道除味是除装修味：
+背景：双舱未明确标注除装修味，也未专门拍摄相关内容，导致消费者认知存在疑问。
+目的：验证消费者是否理解“除装修味”的概念及其是否满足需求。
+行动：调查认知情况并分析消费者需求。
+成果定义：输出消费者认知度及需求分析报告。
+结束标准：完成报告并经Harry确认。
 
-【历史简单任务示例4｜红书策略专项会】
-任务标题：红书策略专项会
-背景：针对红书综合战略的制定，存在策略无人拍板导致推进停滞的问题。
-目的：明确红书品牌种草及销售闭环的预算决策流程和责任人，推动红书整体战略制定和执行。
-行动：
-1. 组织外部红书专家进行分享，帮助团队理解红书现状及打法
-2. 召开内部红书策略会，结合外部视角制定具体战略方案
+4. 找合适的B站博主合作完成污染物检测仪共创开发：
+背景：内部在污染物检测仪开发能力上存在不确定性，可借助外部动手和测试能力推进。
+目的：先不占用内部核心资源，通过外部资源推进可行性探索。
+行动：物色并对接合适的B站博主，探讨合作开发可能性。
+
+5. 25年整体经营情况分析：
+背景：经营分析需要从data、information、knowledge、understanding多层次展开。
+目的：形成整体经营情况的分析视角。
+
+6. 上门除醛直播间引导到私域成交的进展同步：
+背景：需要持续追踪上门除醛直播间引导到私域成交的进展。
+目的：验证直播间直接引流到私域转化路径是否跑通，追踪关键指标。
+行动：每两周同步一次进展文档，聚焦关键指标、阶段结论、问题和计划。
+
+7. 红书策略专项会：
+背景：红书综合战略制定中，存在策略无人拍板导致推进停滞的问题。
+目的：明确红书品牌种草及销售闭环的预算决策流程和责任人。
+行动：组织外部专家分享并召开内部红书策略会。
 成果定义：形成红书综合策略方向、预算决策流程和职责分工。
-任务结束标准：参与人员名单及职责明确，预算决策权限落实，完成外部专家沟通并形成会议纪要，由相关负责人确认成果。
+结束标准：职责明确、预算决策权限落实、形成会议纪要并由负责人确认。
+
+8. 基于DIKUW模型对经营情况进行多层次分析：
+背景：数据颗粒度越来越细，但经营分析得出的信息和行动越来越不清晰。
+目的：基于DIKUW模型明确经营现状及变化原因，指导生意机会判断。
+行动：整理过往会议文档、相关方完成思考并进行对齐。
+结束标准：组织一次会议进行对齐，明确后续分析框架和动作职责。
+
+9. 凝胶等主推品的成本结构拆解与共享：
+战略意图：通过优化成本结构，维持毛利率，并实现成本拆解与共享，提升销售团队对产品成本的理解和销售策略制定能力。
+底层逻辑：成本拆解、成本优化、成本共享、毛利率维持、战略实施。
+成功画面：成本结构清晰，毛利率稳定，销售团队理解成本，销售策略有效。
+边界提醒：需要产品、供应链、销售协同，确保信息准确及时共享。
+
+10. 抖音算法与策略型人才调研与面试：
+背景：公司正在加深对抖音平台机制的理解，需要通过真实人才市场面试完成能力画像校准、人才供给判断、薪酬区间摸底和招聘可行性验证。
+目的：1个月内完成至少3位候选人面试，并输出是否招、招哪类、预算区间、渠道与推荐人脉。
+行动：咨询阿坤，形成岗位画像和面试题纲。
+
+11. 400电话服务机制建立：
+背景：公司目前缺少400电话服务。
+目的：明确400电话服务的部门归属及实现方案。
+行动：短期明确归属与管理责任并确定落地方案，长期逐步构建规范的客服管理体系。
+成果定义：400电话部门归属及实现方案确定并获得确认。
+结束标准：400电话正常运转。
+
+12. 家庭清洁产品专项会：
+背景：随着上门服务场景延展，需要对开荒保洁、精细保洁等清洁产品线进行系统讨论。
+目的：对齐家庭清洁相关产品线方向判断，明确是否做、做什么、与品牌定位的关系。
+行动：与冯卫老师讨论路径，召开专项会，基于讨论生成图片和外观设计方案用于电商测试。
+成果定义：形成围绕家庭清洁产品线的初步方向共识。
+结束标准：完成专项会并形成明确讨论结论记录。
+
+13. 提供1月销售&利润分析月报：
+背景：需要从SOP部门视角呈现数据与问题highlight。
+目的：形成销售和利润月报。
 `;
 
-  // ===== 历史任务逻辑增强：复杂任务 =====
   const COMPLEX_HISTORY_CONTEXT = `
-你是公司内部的复杂任务卡结构化助手。请严格参考历史复杂任务卡的写法逻辑生成复杂任务卡，确保输出符合公司内部战略拆解风格。
+你是公司内部的复杂任务卡结构化助手。请严格参考公司历史复杂任务卡的写法逻辑生成复杂任务卡，确保输出符合公司内部战略拆解风格。
 
 【历史复杂任务卡写法规则】
 1. 战略意图：回答“为什么现在要做这件事”，体现组织价值和战略意义。
@@ -948,112 +994,134 @@
 6. 行动：要求拆到 Owner、DDL、动作、产出，保证可执行。
 7. 整体风格：偏内部战略拆解风格，表达清晰，不写空泛套话。
 
-【历史复杂任务示例1｜组织形态升级试点】
-任务标题：对组织形式的新思考：以大品类为单元的组织运转机制升级试点
-战略意图：通过调整新的组织形态，形成独立的团队运转，以大品类为单位提升组织对品类机会的响应和执行能力。
-底层逻辑：
-1. 2026年公司计划抓住喷雾、空气净化、大车载等大品类市场机会。
-2. 现有组织形态和主流程无法有效支撑抓住这些机会。
-3. 需要通过以大品类为单位运转来形成更直接的组织响应能力。
-成功画面：
-1. 输出新的组织形态和运转机制方案文档
-2. 方案获得Harry确认并具备可执行性
-3. 大车载品类线试点运行顺畅，具备推广价值
-边界提醒：
-1. 先以大车载进行打样，不直接全面铺开
-2. 方案必须经过Harry确认后再推进落地
-背景：现有组织形态和主流程无法有效支撑大品类机会抓取。
-行动：
-1. Owner：黄灵颖｜DDL：待定｜动作：以大车载品类线进行打样，梳理新的组织形态和运转机制｜产出：组织形态及运转机制方案文档
-2. Owner：黄灵颖｜DDL：待定｜动作：与Harry确认方案并推进落地｜产出：确认版落地方案
+【历史复杂任务全集参考】
+1. 战略地图升级：
+背景：凝胶分价格段防御会上，对抖音罐单价与客单价交叉分析有深入解读，更清楚看到了战场形势。
+目的：通过升级战略地图，更清晰展示各价格段竞争情况，为策略制定提供指引。
+行动：补充天猫和上门除醛数据、补充其他品类数据、优化呈现形式。
+成果定义：交付升级后的战略地图（覆盖核心渠道和重要品类）。
+结束标准：战略地图升级完成并经相关负责人确认。
 
-【历史复杂任务示例2｜市场地位信任状升级】
-任务标题：对市场地位信任状做升级，支撑消费者对我们形成“除甲醛第一品牌”的心智
-战略意图：通过在直播间露出市场地位相关认证，让消费者形成“希望树是除甲醛领域第一品牌”的心智认知，强化信任感并提升直播间转化效率。
-底层逻辑：
-1. 各类认证本身不是目标，而是用于支撑“除甲醛第一”的信任背书。
-2. 先明确直播间需要传递给消费者的“第一心智结果”，再反推所需的市场地位认证与表达方式。
-3. 所有表述都应以是否有助于直播间转化作为最终判断标准。
-成功画面：
-1. 拿到相关市场地位认证
-2. 直播间露出后让消费者形成“除醛第一品牌”的心智
-3. 相关表达可稳定复用在直播话术、物料及后续品类扩展中
-边界提醒：
-1. 不以“认证方能给什么”倒推我们要讲什么
-2. 若消费者侧无法形成清晰“第一”感知，应及时调整或放弃
-3. 所有认证与表达必须以合规、可落地于直播间为前提
-背景：需要在直播间形成可提升转化的“第一品牌”心智。
-行动：
-1. Owner：张琬璐｜DDL：待定｜动作：完整听一遍冯卫东团队沟通，了解背景信息｜产出：背景梳理
-2. Owner：张琬璐｜DDL：待定｜动作：整理现有情况和想法，完成测试验证｜产出：验证结论
-3. Owner：张琬璐｜DDL：待定｜动作：与冯卫东团队对接，同步思路并咨询建议｜产出：对接纪要
+2. 建立绩效体系整体框架并推动方案落地：
+行动：把绩效体系建立作为项目推进，总经办作为项目管理支持方；确保在HR团队中培养可独立推进绩效项目的项目经理角色。
+成果定义：完成绩效体系方案、推动落地执行、培养项目经理角色。
+结束标准：确认绩效激励方案并落地执行。
 
-【历史复杂任务示例3｜双舱GTM命名与价值点任务】
-任务标题：双舱GTM：双舱产品重新概念及命名讨论，如何让消费者更能Get它的价值点
-战略意图：通过对“双舱”产品的命名与核心利益点重新定义，把当前“Feature表述不清、价值点难被理解”的问题，转化为消费者可一眼理解的高端线价值主张，从而支撑高端线定价与增长。
-底层逻辑：
-1. 以“Benefit优先”作为表达与验证原则。
-2. 通过“我是什么—有何不同—何以见得”三问框架，把产品特性翻译为消费者价值。
-3. 以消费者是否“秒懂”作为最终检验标准。
-成功画面：
-1. 消费者在关键触点能迅速理解“双舱高端线”的核心价值
-2. 认知层面能准确复述其解决的是装修味/甲醛相关问题
-3. 行为层关键指标提升，如点击、停留、加购、咨询、转化
-边界提醒：
-1. “双舱”仅为内部代号，对外命名不强制使用“双舱”字样
-2. 不预设最终命名结论，允许多套命名与表达方案并行验证
-3. 允许未来分阶段推进表达升级
-背景：当前双舱产品价值点难被消费者快速理解，影响高端线表达与转化。
-行动：
-1. Owner：张婷 / 姚雪子 / 张琬璐｜DDL：待定｜动作：围绕价值点、命名、证据体系展开方案设计｜产出：多套概念及命名方案
-2. Owner：张婷 / 姚雪子 / 张琬璐｜DDL：待定｜动作：验证消费者是否真正Get价值点｜产出：验证结论
+3. 以大品类为单元的组织运转机制升级试点：
+背景：2026年公司计划抓住喷雾、空气净化、大车载等大品类市场机会，现有组织形态和主流程无法有效支撑。
+目的：通过调整新的组织形态，形成独立的团队运转，以大品类为单位提升组织响应和执行能力。
+行动：以大车载品类线进行打样，梳理新的组织形态和运转机制，与Harry确认后推进落地。
+成果定义：输出新组织形态和运转机制方案文档，试点运行顺畅具备推广价值。
+结束标准：方案完成并获Harry确认，试点落地且初步验证有效。
 
-【历史复杂任务示例4｜AI+创业小队探索】
-任务标题：探索“AI+创业小队”的组织与业务可能性
-战略意图：为公司提前探索一种可能具备非线性增长潜力的创新模式，在不干扰现有主线业务的前提下，为未来的新产品、新打法和新组织能力预留空间。
-底层逻辑：
-1. AI带来的变化不仅是工具效率提升，更可能重塑“人如何做生意”的方式。
-2. 从一开始就以AI原生方式运转的小型创业单元，在试错成本、迭代速度和创造力上具备更高上限。
-3. 如果长期停留在想法层面而不持续推动，相关机会可能会自然消散。
-成功画面：
-1. 公司内部对“AI+创业小队”形成清晰认知与讨论基础
-2. 至少有1个可被持续跟进的探索方向或试点形态
-3. 相关人选逐步浮出水面，具备进一步推进的可能性
-边界提醒：
-1. 不将该任务等同为短期业绩或明确商业承诺
-2. 不在探索阶段贸然进行大规模资源投入
-3. 不以行政指令方式强行推动“创业”
-背景：既有组织形态可能难以充分释放AI带来的结构性机会。
-行动：
-1. Owner：陈登志｜DDL：待定｜动作：持续探索AI原生小队作为潜在创新形态的可行性｜产出：探索方向清单
-2. Owner：陈登志｜DDL：待定｜动作：从外部与内部两个方向并行思考人选来源｜产出：候选人画像
-3. Owner：陈登志｜DDL：待定｜动作：结合自身AI能力与公司业务认知，探讨是否具备带队与孵化条件｜产出：初步判断
+4. 家家净 Brand book 初稿：
+背景：需要重新出一版品牌手册。
+目的：结合录音内容、AI brief及品牌手册结构，完成一版初稿。
+行动：整理会议录音、拆解现有品牌手册结构、结合两者生成初稿。
+结束标准：产出一版Harry基本满意的brandbook。
 
-【历史复杂任务示例5｜战略地图升级】
-任务标题：战略地图升级：补齐各渠道各品类罐单价X客单价交叉分析
-战略意图：通过升级战略地图，更清晰地展示各价格段的竞争情况，为策略制定提供指引。
-底层逻辑：
-1. 凝胶分价格段防御会上，抖音罐单价与客单价交叉分析帮助看清战场形势。
-2. 若其他渠道与品类数据缺失，战略地图无法真正支撑策略判断。
-3. 需要补充渠道、品类和更好的呈现方式，才能形成可指引策略的地图。
-成功画面：
-1. 升级后的战略地图覆盖核心渠道与重要品类
-2. 展示形式更清晰，能够直接支持策略制定
-边界提醒：
-1. 先聚焦核心渠道与重要品类
-2. 上门除醛数据需先确认是否可实现
-背景：当前战略地图不足以完整反映各渠道、各品类战场形势。
-行动：
-1. Owner：陈登志｜DDL：待定｜动作：补充天猫和上门除醛数据｜产出：渠道补充数据
-2. Owner：陈登志｜DDL：待定｜动作：补充其他品类数据，优先空净｜产出：品类补充数据
-3. Owner：陈登志｜DDL：待定｜动作：优化呈现形式｜产出：升级版战略地图
+5. 2026年销售指标完成路径拆解与两轮汇报机制：
+背景：销售指标下发后，店铺/渠道负责人的生意规划方式差异大，缺乏统一结构化拆解工具与检验机制。
+目的：通过统一的Building Block表格模板与两轮上台汇报机制，建立结构化思考与评审机制。
+行动：设计统一表格、组织负责人完成拆解并提交材料、落地两轮汇报机制。
+成果定义：确定26年销售指标及过程指标。
+结束标准：完成两轮汇报并确认26年销售指标。
+
+6. 市场地位信任状升级：
+战略意图：通过在直播间露出市场地位相关认证，让消费者形成“希望树是除甲醛领域第一品牌”的心智认知。
+底层逻辑：认证不是目的，而是“第一心智”的信任背书；先明确要传递的心智，再反推认证与表达。
+成功画面：拿到认证、直播间形成“除醛第一品牌”心智、表达可稳定复用。
+边界提醒：不以认证方能给什么倒推表达；如果消费者感知不到“第一”，应调整；所有表达需合规。
+行动：完整听沟通、整理现有情况、完成测试验证、与冯卫东团队对接。
+结束标准：和Harry共识认证路径并推动执行，用于直播间等场景。
+
+7. 对齐市场部26年预算：
+背景：市场部与渠道之间预算规划和职责划分不清晰，导致品牌投入、种草效果及闭环转化指标难以明确管理和考核。
+目的：明确市场部与渠道的预算归属及考核指标，理清品牌投入与种草投入边界。
+行动：梳理预算规模及归属、明确考核指标、建立预算审批及执行流程。
+成果定义：输出《26年市场部预算综合方案》。
+结束标准：方案经负责人确认并达成共识，流程正式执行并得到落实。
+
+8. 建立消费者反馈机制（产品+服务）：
+背景：消费者反馈是了解市场需求、提升产品竞争力的关键。
+目的：建立消费者反馈机制，确保研发团队能够获取消费者真实反馈。
+行动：CMI主导与研发共创，覆盖双舱、车载等产品及上门除醛服务；先完成1-2个产品机制反馈打样。
+成果定义：建立完成消费者反馈机制方案及相关数据收集体系。
+结束标准：消费者反馈机制建立完成，产品、研发、上门除醛对机制达成共识。
+
+9. 建立可使用的外部异味测评Panel：
+背景：现有异味测评由实验室内部人员自行进行，存在健康风险。
+目的：建立外部训练过的评估panel，替代实验室内部评审。
+行动：对齐测评SOP及人员需求、发起外部招募、完成首次测评。
+成果定义：输出测评SOP、完成招募及筛选流程说明，外部人员池建立完成。
+结束标准：建立测评人员池并完成首次测评，研发验证模式可行。
+
+10. 讨论私域X上门除醛业务合作模式：
+背景：上门除醛直播间放大量会亏损，但私域团队对直播间消费者转化率高、退款率低。
+目的：放大私域和上门除醛直播间的盈利能力。
+行动：明确合作模式、评估直播间运行模式、私域与上门除醛及财务数据团队共同测算合作模型。
+成果定义：输出合作模式评估报告及盈利测算结果。
+结束标准：形成明确合作方案报告并经相关团队和Harry确认。
+
+11. 双舱GTM：重新概念及命名讨论：
+战略意图：通过对“双舱”产品命名与核心利益点重新定义，把Feature表述不清、价值点难理解的问题，转化为消费者可一眼理解的高端线价值主张。
+底层逻辑：以Benefit优先，使用“我是什么—有何不同—何以见得”三问框架，将特性翻译为价值并以消费者是否秒懂为检验标准。
+成功画面：消费者在详情页/短视频/直播/达人内容中迅速理解双舱高端线价值，并体现为点击、停留、加购、咨询、转化提升。
+边界提醒：双舱仅为内部代号；不预设最终命名结论；允许未来迭代表达。
+结束标准：按原文虽然误写成合作模式沟通，但实际应理解为完成概念/命名/价值点方案并达成确认。
+
+12. 模具能力调研与专家访谈：
+背景：新品开发中，模具开发速度与试错成本制约新品验证节奏，26年有大量新品。
+目标：掌握如何更快、更好地完成数码模具设计及快速制作可试模具的方法。
+行动：拆解模具相关SOP、寻找并联络模具专家与供应商、通过访谈了解快速模具/数字化模具、Harry进一步拜访。
+成果定义：先拆解模具SOP，再通过访谈获取有效信息，提升模具能力。
+结束标准：完成既定专家与供应商访谈，获得可用于模具能力建设的有效信息。
+
+13. 思考车载、办公等场景的战略增长锚点：
+背景：凝胶分价格段防御会议后，凝胶已想得较清楚，还需要把车载、办公等场景想清楚。
+行动：先用AI完成思考，再与相关人员共同完成思考。
+
+【CEO主线补充复杂任务参考】
+14. 探索“AI+创业小队”的组织与业务可能性：
+战略意图：为公司提前探索一种可能具备非线性增长潜力的创新模式，为未来新产品、新打法和新组织能力预留空间。
+底层逻辑：AI可能重塑“人如何做生意”的方式；AI原生小队在试错成本、迭代速度和创造力上具备更高上限。
+成功画面：内部形成清晰认知与讨论基础；至少有1个可持续跟进的探索方向；相关人选逐步浮出水面。
+边界提醒：不等同于短期业绩承诺；不在探索阶段大规模投入；不以行政指令强推创业。
+行动：持续探索、并行思考外部和内部人选来源、探讨带队与孵化条件、持续讨论防止搁置。
+
+15. 妥善应对消费者报及消协约谈：
+战略意图：确保公司在公共舆论与监管环境中的合规性与可信度不被动受损，避免单一事件演变为长期系统性风险。
+底层逻辑：这不只是一次舆情，而是社会公信体系对企业专业性与责任边界的审视；通过专业、克制、体系化应对，并引入权威第三方，有助于将问题引导回专业讨论。
+成功画面：消费者报与消协态度趋于理性稳定；事件未继续发酵；对外形成清晰专业解释口径；公司业务推进不受牵制。
+边界提醒：不将个案处理上升为品牌对立；不在事实与标准未厘清前做过度承诺。
+行动：现场处理、媒体与消协双线沟通、持续同步进展、必要时引入清华及行业协会等第三方机构。
+
+16. 用合理组织形态推进凝胶两个产品线：
+战略意图：通过调整组织形态，让不同价位、不同定位的凝胶产品线拥有清晰稳定的责任主体，确保高端市场与下沉市场两条路径都能持续推进。
+底层逻辑：下沉市场不能只靠临时项目或渠道驱动，必须有人长期负责产品线；通过“渠道+产品线”绑定，才能把价格带策略、产品演进与经营结果真正绑定。
+成功画面：高端线与国标线有明确负责人和稳定小组运转；不同渠道围绕同一产品线形成协同；团队对“谁负责、怎么做成功”形成共识。
+边界提醒：不在本阶段引发大规模组织重构；不等同于人员调整或绩效讨论；不在未验证前复制到所有品类。
+行动：引入“渠道+产品线”并行管理方式；按产品规划拆成多个产品线小组；在内容电商、综合电商形成对应小组；产品团队和抖音侧围绕产品线运转；进一步讨论人选安排。
+
+17. 将战略地图与发展路线转译为AI提示词，并系统梳理公司现状：
+战略意图：通过将战略思考显性化、结构化，建立一套可被反复调用的共同认知底座。
+底层逻辑：公司需要一张完整统一的战略地图，用来明确当前位置、目标方向与行进路径；只有“走哪条路、为什么、当前车况如何”被系统呈现出来，管理层才能基于同一张地图判断。
+成功画面：战略地图与发展逻辑被清晰呈现在完整文档中；不同角色能基于同一套地图与语言体系讨论；后续关键任务不再依赖个人临场解释。
+边界提醒：不追求一次性输出终极战略答案；不将AI输出直接等同于最终战略结论；不在该任务中展开具体项目拆解。
+行动：将战略地图、发展路线及“开车/修车/改装”核心逻辑结构化转译为可复用AI提示词；基于统一提示词驱动AI输出综合文档。
+
+18. 不同价格段产品方案与eCPM目标确认：
+战略意图：通过清晰的价格段产品布局与量化的eCPM目标设定，确保下沉市场进攻建立在可计算、可对标、可调整的理性基础上。
+底层逻辑：下沉市场竞争本质是产品结构与投放效率的双重竞争；只有明确什么产品打什么价位、用什么效率标准去竞争，组织才能判断是否值得投入、如何优化打法。
+成功画面：凝胶在各主要价格段都有明确可复述的产品方案；每个产品的定位、名称与利益点清晰；团队对不同价格段对应的eCPM目标形成共识；能在进入实战前判断“能不能打、该怎么打”。
+边界提醒：不在本任务中直接承诺具体投放规模或预算；eCPM目标不等同于最终经营结果，需动态验证与修正。
+行动：梳理不同价格段的具体产品方案；明确产品名称、归属、核心利益点及差异化侧重点；校准价格段区隔逻辑；对标竞品eCPM；明确各价格段可接受、可竞争的eCPM目标区间。
 `;
 
-  // ===== Prompts =====
   const PROMPT_STANDARDIZE_SIMPLE = `
 ${SIMPLE_HISTORY_CONTEXT}
 
-📥 请输出任务的标准化字段内容，需结合上下文梳理相关信息，不要引入未提及的主观臆测：
+请输出任务的标准化字段内容，需结合上下文梳理相关信息，不要引入未提及的主观臆测：
 
 【一、任务描述】
 ① 背景（一句话）
@@ -1072,7 +1140,7 @@ ${SIMPLE_HISTORY_CONTEXT}
   const PROMPT_STANDARDIZE_COMPLEX = `
 ${COMPLEX_HISTORY_CONTEXT}
 
-📥 请基于 brief 输出以下字段（必须严格按顺序输出，字段名不变），不引入主观臆测、不新增未提及事实：
+请基于 brief 输出以下字段（必须严格按顺序输出，字段名不变），不引入主观臆测、不新增未提及事实：
 ① 战略意图（一句话：为什么做/对组织的价值）
 ② 底层逻辑（2-4条：关键假设/因果链/为什么这些动作能达成意图）
 ③ 成功画面（2-4条：可被验收的结果描述，尽量用里程碑/指标/可观察证据表达）
@@ -1099,41 +1167,38 @@ ${COMPLEX_HISTORY_CONTEXT}
 
   const PROMPT_CHECK_SIMPLE = `
 请你作为「任务描述校验助手」，根据 brief 内容：
-✔ 判断逻辑
 若 brief 明确 → 直接回复：“brief完整，可执行”
-若 brief 不明确 → 请仅输出以下三项（保持极简）：
-- 缺少项：（逐条指出 brief 缺少哪些必要信息）
-- CEO需确认：（哪些关键点需要 CEO 明确）
-- 建议补充：（一句话轻提示，不做扩展和决策）
+若 brief 不明确 → 请仅输出以下三项：
+- 缺少项：
+- CEO需确认：
+- 建议补充：
 
-✔ 校验标准（仅判断两点）
-1) 成果定义是否清晰（最终要产出什么？呈现形式是什么？）
-2) 交付标准是否明确（什么条件下算完成？是否可验收？）
+校验标准：
+1) 成果定义是否清晰
+2) 交付标准是否明确
 
 以下是 brief 内容：
 `;
 
   const PROMPT_CHECK_COMPLEX = `
 请你作为「复杂任务 brief 完整度校验助手」，根据 brief 内容进行校验：
-✔ 判断逻辑
 若 brief 足够完整 → 直接回复：“brief完整，可执行（复杂任务）”
-若 brief 不完整 → 只输出以下三项（保持极简）：
-- 缺少项：（逐条指出缺少哪些关键字段/信息）
-- CEO需确认：（必须由CEO/关键决策者拍板的点）
-- 建议补充：（一句话轻提示，不做扩展）
+若 brief 不完整 → 只输出以下三项：
+- 缺少项：
+- CEO需确认：
+- 建议补充：
 
-✔ 校验维度（升级全量校验）
-1) 战略意图是否明确（为什么做/价值）
-2) 底层逻辑是否自洽（关键假设/因果链）
-3) 成功画面是否可验收（指标/里程碑/证据）
-4) 边界是否清楚（不做什么/风险/拍板点）
-5) 背景是否充分（来源/场景/约束）
-6) 行动是否可执行（是否包含 Owner & DDL & 产出里程碑）
+校验维度：
+1) 战略意图是否明确
+2) 底层逻辑是否自洽
+3) 成功画面是否可验收
+4) 边界是否清楚
+5) 背景是否充分
+6) 行动是否可执行
 
 以下是 brief 内容：
 `;
 
-  // ===== helpers =====
   function setStatus(msg){ statusText.textContent = msg || ''; }
 
   function setLoading(loading){
@@ -1238,14 +1303,14 @@ ${COMPLEX_HISTORY_CONTEXT}
           if(entry.task) taskOutputSimple.textContent = entry.task;
           if(entry.titles) titleOutputSimple.textContent = entry.titles;
           if(entry.check) checkOutputSimple.textContent = entry.check;
-          setStatus('已从历史记录回填到【简单任务】。');
+          setStatus('已从历史记录回填到【简单任务】');
           if(currentLayout() === 'tabs') activateTab('simple');
         }else{
           rawInputComplex.value = entry.input || '';
           if(entry.task) taskOutputComplex.textContent = entry.task;
           if(entry.titles) titleOutputComplex.textContent = entry.titles;
           if(entry.check) checkOutputComplex.textContent = entry.check;
-          setStatus('已从历史记录回填到【复杂任务】。');
+          setStatus('已从历史记录回填到【复杂任务】');
           if(currentLayout() === 'tabs') activateTab('complex');
         }
       });
@@ -1265,6 +1330,28 @@ ${COMPLEX_HISTORY_CONTEXT}
     }catch(e){
       console.error(e);
       alert('复制失败，可尝试手动选择文本复制。');
+    }
+  }
+
+  function formatFeishuBlock(title, content){
+    const text = (content || '').trim();
+    if(!text) return '';
+    return `# ${title}\n\n${text}`;
+  }
+
+  async function copyFeishuFormatted(title, content, label){
+    const text = (content || '').trim();
+    if(!text){
+      alert(`没有可复制的${label || '内容'}`);
+      return;
+    }
+    const formatted = formatFeishuBlock(title, text);
+    try{
+      await navigator.clipboard.writeText(formatted);
+      setStatus(`${label || '内容'}已按飞书格式复制`);
+    }catch(e){
+      console.error(e);
+      alert('复制失败，可尝试手动复制。');
     }
   }
 
@@ -1317,7 +1404,6 @@ ${COMPLEX_HISTORY_CONTEXT}
   }
 
   async function callAIHubMix(prompt, modelName){
-    // 如果你的 Vercel 后端路由已经改成 /api/aihubmix，这里把 /api/dashscope 改为 /api/aihubmix 即可
     const resp = await fetch("/api/dashscope", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -1457,7 +1543,6 @@ ${COMPLEX_HISTORY_CONTEXT}
     const visible = historyDrawer.style.display === 'flex';
     visible ? closeHistory() : openHistory();
   });
-
   closeHistoryBtn.addEventListener('click', closeHistory);
 
   function setTheme(mode){
@@ -1549,10 +1634,16 @@ ${COMPLEX_HISTORY_CONTEXT}
   copyTaskBtnSimple.addEventListener('click', ()=>copyText(taskOutputSimple.textContent, '任务卡（简单）'));
   copyTitleBtnSimple.addEventListener('click', ()=>copyText(titleOutputSimple.innerText || titleOutputSimple.textContent, '标题候选（简单）'));
   copyCheckBtnSimple.addEventListener('click', ()=>copyText(checkOutputSimple.textContent, '校验结果（简单）'));
+  copyFeishuTaskBtnSimple.addEventListener('click', ()=>copyFeishuFormatted('简单任务卡', taskOutputSimple.textContent, '任务卡（简单）'));
+  copyFeishuTitleBtnSimple.addEventListener('click', ()=>copyFeishuFormatted('简单任务标题候选', titleOutputSimple.innerText || titleOutputSimple.textContent, '标题候选（简单）'));
+  copyFeishuCheckBtnSimple.addEventListener('click', ()=>copyFeishuFormatted('简单任务 brief 完整度校验', checkOutputSimple.textContent, '校验结果（简单）'));
 
   copyTaskBtnComplex.addEventListener('click', ()=>copyText(taskOutputComplex.textContent, '任务卡（复杂）'));
   copyTitleBtnComplex.addEventListener('click', ()=>copyText(titleOutputComplex.innerText || titleOutputComplex.textContent, '标题候选（复杂）'));
   copyCheckBtnComplex.addEventListener('click', ()=>copyText(checkOutputComplex.textContent, '校验结果（复杂）'));
+  copyFeishuTaskBtnComplex.addEventListener('click', ()=>copyFeishuFormatted('复杂任务卡', taskOutputComplex.textContent, '任务卡（复杂）'));
+  copyFeishuTitleBtnComplex.addEventListener('click', ()=>copyFeishuFormatted('复杂任务标题候选', titleOutputComplex.innerText || titleOutputComplex.textContent, '标题候选（复杂）'));
+  copyFeishuCheckBtnComplex.addEventListener('click', ()=>copyFeishuFormatted('复杂任务 brief 完整度校验', checkOutputComplex.textContent, '校验结果（复杂）'));
 
   refreshHistoryBtn.addEventListener('click', renderHistory);
   clearHistoryBtn.addEventListener('click', ()=>{
