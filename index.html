@@ -1,227 +1,1572 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<title>任务卡工作台</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>任务卡工作台 v4（AIHubMix · 简单/复杂双区）</title>
 
 <style>
+  :root {
+    --primary: #2563eb;
+    --primary-2: #1d4ed8;
+    --primary-soft: #dbeafe;
+    --primary-soft2: #eff6ff;
 
-body{
-font-family:system-ui,-apple-system;
-margin:0;
-background:#f6f8fb;
-color:#0f172a;
-}
+    --bg: #f5f7fb;
+    --card-bg: #ffffff;
+    --border: #dbe2ea;
 
-header{
-padding:20px;
-background:#111827;
-color:white;
-}
+    --text-main: #0f172a;
+    --text-sub: #64748b;
 
-.container{
-display:flex;
-gap:20px;
-padding:24px;
-}
+    --shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.08);
+    --shadow-strong: 0 18px 50px rgba(15, 23, 42, 0.16);
 
-.panel{
-flex:1;
-background:white;
-border-radius:12px;
-padding:20px;
-box-shadow:0 10px 20px rgba(0,0,0,0.05);
-}
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
 
-textarea{
-width:100%;
-height:200px;
-border:1px solid #e5e7eb;
-border-radius:8px;
-padding:10px;
-}
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+  }
 
-button{
-background:#2563eb;
-color:white;
-border:none;
-padding:10px 16px;
-border-radius:8px;
-cursor:pointer;
-}
+  html[data-theme="dark"] {
+    --primary: #60a5fa;
+    --primary-2: #3b82f6;
+    --primary-soft: rgba(96, 165, 250, 0.14);
+    --primary-soft2: rgba(96, 165, 250, 0.08);
 
-.result{
-margin-top:20px;
-background:#f8fafc;
-padding:12px;
-border-radius:8px;
-border:1px solid #e5e7eb;
-white-space:pre-wrap;
-}
+    --bg: #0b1220;
+    --card-bg: #111827;
+    --border: #1f2937;
 
+    --text-main: #f8fafc;
+    --text-sub: #94a3b8;
+
+    --shadow-soft: 0 8px 24px rgba(0,0,0,0.25);
+    --shadow-strong: 0 18px 50px rgba(0,0,0,0.40);
+  }
+
+  * { box-sizing: border-box; }
+
+  body{
+    margin:0;
+    font-family:"Microsoft YaHei","微软雅黑","PingFang SC",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    color:var(--text-main);
+    background:
+      radial-gradient(circle at top left, rgba(37, 99, 235, 0.06) 0%, transparent 38%),
+      radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.04) 0%, transparent 42%),
+      var(--bg);
+    overflow-x: hidden;
+  }
+  html[data-theme="dark"] body{
+    background:
+      radial-gradient(circle at top left, rgba(96, 165, 250, 0.08) 0%, transparent 36%),
+      radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.06) 0%, transparent 40%),
+      var(--bg);
+  }
+
+  .topbar{
+    height:60px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  html[data-theme="dark"] .topbar {
+    background: rgba(17,24,39,0.88);
+  }
+
+  .topbar-left{ display:flex; align-items:center; gap:10px; }
+  .topbar-logo{
+    width:34px;height:34px;border-radius:10px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    box-shadow: var(--shadow-soft);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:900;font-size:13px;
+    letter-spacing: .4px;
+  }
+  .topbar-title{ font-size:15px;font-weight:900; letter-spacing:0.2px; }
+  .topbar-sub{ font-size:12px;color:var(--text-sub); margin-top:1px; }
+  .topbar-right{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+
+  .badge{
+    border-radius:999px;
+    padding:4px 10px;
+    font-size:11px;
+    font-weight:800;
+    background: var(--primary-soft);
+    color: var(--primary);
+    border: 1px solid rgba(37,99,235,0.12);
+    white-space:nowrap;
+  }
+
+  .page{
+    max-width:1320px;
+    margin:14px auto 28px;
+    padding:0 16px;
+    position: relative;
+    z-index: 5;
+  }
+
+  .page-subtitle{
+    font-size:13px;
+    color:var(--text-sub);
+    margin:10px 0 12px;
+  }
+
+  .enhance-banner{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom:14px;
+    padding:12px 14px;
+    border-radius:14px;
+    background: linear-gradient(180deg, #eff6ff, #f8fbff);
+    border: 1px solid #bfdbfe;
+    color:#1e3a8a;
+    box-shadow: 0 6px 16px rgba(37,99,235,0.08);
+  }
+  html[data-theme="dark"] .enhance-banner{
+    background: linear-gradient(180deg, rgba(96,165,250,0.10), rgba(96,165,250,0.04));
+    border-color: rgba(96,165,250,0.20);
+    color:#bfdbfe;
+  }
+  .enhance-banner-title{
+    font-size:12px;
+    font-weight:900;
+    margin-bottom:3px;
+  }
+  .enhance-banner-desc{
+    font-size:12px;
+    line-height:1.6;
+    color:inherit;
+  }
+
+  .card{
+    background:var(--card-bg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-soft);
+    padding: 16px 16px 14px;
+  }
+
+  .card-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+    margin-bottom:10px;
+  }
+  .card-title{
+    font-size:14px;
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .control{
+    display:flex; align-items:center; gap:8px;
+    font-size:12px; color:var(--text-sub); font-weight:800;
+  }
+
+  select, input[type="text"]{
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    padding: 7px 10px;
+    background: rgba(255,255,255,0.92);
+    color: var(--text-main);
+    font-weight: 800;
+    outline:none;
+  }
+  html[data-theme="dark"] select,
+  html[data-theme="dark"] input[type="text"]{
+    background: rgba(17,24,39,0.92);
+    border-color: var(--border);
+    color: var(--text-main);
+  }
+
+  .api-key-box{
+    background: linear-gradient(180deg, rgba(248,250,252,0.96), rgba(255,255,255,0.92));
+    border: 1px dashed #cbd5e1;
+    border-radius: var(--radius-md);
+    padding: 12px 12px;
+    margin-bottom: 12px;
+  }
+  html[data-theme="dark"] .api-key-box{
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(17,24,39,0.92));
+    border: 1px dashed rgba(148,163,184,0.25);
+  }
+
+  .api-key-title{
+    font-size:12px;
+    font-weight:900;
+    color:var(--text-main);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:6px;
+  }
+  .api-key-sub{ font-size:11px; color:var(--text-sub); font-weight:600; }
+
+  .api-key-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:8px;
+    flex-wrap:wrap;
+  }
+  .api-key-tip{ font-size:11px; color:var(--text-sub); font-weight:600; }
+
+  input[type="password"]{
+    width:100%;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    padding: 9px 12px;
+    font-size:13px;
+    outline:none;
+    background:#ffffff;
+    transition: box-shadow .12s ease, border-color .12s ease, transform .08s ease;
+  }
+  html[data-theme="dark"] input[type="password"]{
+    background: rgba(255,255,255,0.03);
+    border-color: var(--border);
+    color: var(--text-main);
+  }
+  input[type="password"]:focus{
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    transform: translateY(-1px);
+  }
+
+  .brief-label{
+    font-size:14px;
+    font-weight:1000;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:8px;
+  }
+  .brief-label span{
+    font-size:12px;
+    font-weight:700;
+    color:var(--text-sub);
+  }
+
+  textarea{
+    width:100%;
+    min-height: 170px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    padding: 12px 12px;
+    font-size:13px;
+    line-height:1.7;
+    resize:vertical;
+    outline:none;
+    background:#ffffff;
+    transition: box-shadow .12s ease, border-color .12s ease, transform .08s ease;
+  }
+  html[data-theme="dark"] textarea{
+    background: rgba(255,255,255,0.03);
+    border-color: var(--border);
+    color: var(--text-main);
+  }
+  textarea:focus{
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    transform: translateY(-1px);
+  }
+
+  .btn-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+  button{
+    border:none;
+    border-radius:999px;
+    padding: 9px 14px;
+    font-size:13px;
+    font-weight:1000;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease, color .12s ease;
+    user-select: none;
+  }
+  button:disabled{ opacity:0.6; cursor:not-allowed; transform:none; box-shadow:none; }
+
+  .btn-primary{
+    background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    color:#fff;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.24);
+  }
+  .btn-primary:hover:not(:disabled){
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(37, 99, 235, 0.28);
+  }
+
+  .btn-secondary{
+    background: #f8fafc;
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+  }
+  html[data-theme="dark"] .btn-secondary{
+    background: rgba(255,255,255,0.03);
+    border-color: var(--border);
+    color: var(--text-main);
+  }
+  .btn-secondary:hover:not(:disabled){
+    transform: translateY(-1px);
+    background:#f1f5f9;
+  }
+  html[data-theme="dark"] .btn-secondary:hover:not(:disabled){
+    background: rgba(255,255,255,0.06);
+  }
+
+  .btn-ghost{
+    background: transparent;
+    color: var(--text-sub);
+    font-weight:900;
+  }
+  .btn-ghost:hover{
+    background: rgba(37, 99, 235, 0.06);
+    transform: translateY(-1px);
+  }
+
+  .pill{
+    font-size:11px;
+    padding: 3px 10px;
+    border-radius:999px;
+    background: #eff6ff;
+    color: var(--primary);
+    font-weight:1000;
+    border: 1px solid rgba(37,99,235,0.12);
+  }
+  html[data-theme="dark"] .pill{
+    background: rgba(96,165,250,0.10);
+    border-color: rgba(96,165,250,0.18);
+  }
+
+  .action-tip{
+    font-size:11px;
+    color: var(--text-sub);
+    font-weight:700;
+  }
+  .status{
+    font-size:11px;
+    color: var(--text-sub);
+    min-height:14px;
+    margin-top:10px;
+    font-weight:700;
+  }
+
+  .workspace-wrap{ display:flex; flex-direction:column; gap: 14px; }
+  .workspace-grid{ display:grid; gap: 14px; }
+
+  .mode-vertical .workspace-grid{ grid-template-columns: 1fr; }
+  .mode-horizontal .workspace-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items:start;
+  }
+  @media (max-width: 1100px){
+    .mode-horizontal .workspace-grid{ grid-template-columns: 1fr; }
+  }
+  .mode-tabs .workspace-grid{ grid-template-columns: 1fr; }
+
+  .tabs{
+    display:none;
+    gap: 8px;
+    align-items:center;
+    margin-bottom: 4px;
+  }
+  .mode-tabs .tabs{ display:flex; }
+
+  .tab-btn{
+    border-radius:999px;
+    padding: 8px 12px;
+    font-size:12px;
+    font-weight:1000;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.96);
+    color: var(--text-sub);
+    box-shadow: var(--shadow-soft);
+    cursor:pointer;
+  }
+  html[data-theme="dark"] .tab-btn{
+    background: rgba(17,24,39,0.96);
+    border-color: var(--border);
+    color: var(--text-sub);
+  }
+  .tab-btn.active{
+    background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    color: #fff;
+    border-color: transparent;
+  }
+  .mode-tabs .workspace-card{ display:none; }
+  .mode-tabs .workspace-card.active{ display:block; }
+
+  .result-grid{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 14px;
+    margin-top: 12px;
+  }
+  @media (max-width: 1200px){
+    .result-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  }
+  @media (max-width: 880px){
+    .result-grid{ grid-template-columns: 1fr; }
+  }
+
+  .result-box{
+    border-radius: var(--radius-md);
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    padding: 12px 12px;
+    font-family: var(--mono);
+    font-size:12px;
+    line-height:1.65;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 155px;
+  }
+  html[data-theme="dark"] .result-box{
+    background: rgba(255,255,255,0.03);
+    border-color: var(--border);
+  }
+
+  .history-drawer-toggle{
+    position: fixed;
+    right: 12px;
+    bottom: 22px;
+    z-index: 40;
+    background: rgba(255,255,255,0.96);
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-soft);
+    padding: 9px 12px;
+    font-size: 12px;
+    color: var(--text-sub);
+    display:inline-flex;
+    align-items:center;
+    gap: 6px;
+    font-weight: 900;
+  }
+  html[data-theme="dark"] .history-drawer-toggle{
+    background: rgba(17,24,39,0.96);
+    border-color: var(--border);
+  }
+
+  .history-drawer{
+    position: fixed;
+    right: 16px;
+    top: 64px;
+    bottom: 22px;
+    width: 350px;
+    max-width: 90vw;
+    background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(255,255,255,0.97));
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-strong);
+    display:none;
+    flex-direction:column;
+    z-index: 60;
+  }
+  html[data-theme="dark"] .history-drawer{
+    background: linear-gradient(180deg, rgba(17,24,39,0.98), rgba(17,24,39,0.94));
+    border-color: var(--border);
+  }
+
+  .history-drawer-header{
+    padding: 12px 14px 10px;
+    border-bottom: 1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+  }
+
+  .history-drawer-title{
+    font-size: 13px;
+    font-weight: 1000;
+    display:flex;
+    align-items:center;
+    gap: 8px;
+  }
+
+  .tag{
+    font-size:10px;
+    border-radius: 999px;
+    padding: 2px 8px;
+    background: #eff6ff;
+    color: var(--primary);
+    border: 1px solid rgba(37,99,235,0.12);
+    font-weight: 1000;
+  }
+  html[data-theme="dark"] .tag{
+    background: rgba(96,165,250,0.10);
+    border-color: rgba(96,165,250,0.18);
+  }
+
+  .history-drawer-sub{
+    font-size: 11px;
+    color: var(--text-sub);
+    padding: 2px 14px 10px;
+    font-weight: 700;
+  }
+
+  .history-drawer-body{
+    padding: 0 10px 10px;
+    flex: 1;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .history-list{
+    flex:1;
+    overflow:auto;
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+    margin-top: 6px;
+    padding-right: 2px;
+  }
+
+  .history-item{
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 10px 10px;
+    cursor:pointer;
+    background: #ffffff;
+    display:flex;
+    flex-direction:column;
+    gap: 6px;
+    transition: transform .10s ease, background .12s ease, border-color .12s ease;
+  }
+  html[data-theme="dark"] .history-item{
+    background: rgba(255,255,255,0.03);
+    border-color: var(--border);
+  }
+  .history-item:hover{
+    background: #f8fafc;
+    transform: translateY(-2px);
+    border-color: rgba(37,99,235,0.22);
+  }
+  html[data-theme="dark"] .history-item:hover{
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(96,165,250,0.20);
+  }
+
+  .history-title{
+    font-size: 11px;
+    font-weight: 1000;
+    color: var(--text-main);
+  }
+  .history-meta{
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-sub);
+    display:flex; gap:6px; align-items:center; flex-wrap:wrap;
+  }
+  .history-empty{
+    font-size: 11px;
+    color: var(--text-sub);
+    text-align:center;
+    padding: 16px 0;
+    font-weight: 800;
+  }
+
+  .theme-toggle {
+    border-radius: 999px;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.92);
+    box-shadow: var(--shadow-soft);
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--text-sub);
+    cursor:pointer;
+  }
+  html[data-theme="dark"] .theme-toggle{
+    background: rgba(17,24,39,0.92);
+    border-color: var(--border);
+  }
+
+  .tiny{
+    font-size:11px; font-weight:800; color: var(--text-sub);
+  }
 </style>
-
 </head>
 
 <body>
 
-<header>
-<h2>任务卡工作台</h2>
-<div>基于历史任务逻辑增强的任务生成系统</div>
-</header>
+<!-- Topbar -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">TC</div>
+    <div>
+      <div class="topbar-title">任务卡工作台 v4（AIHubMix）</div>
+      <div class="topbar-sub">Task Card Workbench · 简单任务 / 复杂任务 / 任务卡生成 / 标题提炼 / 完整度校验</div>
+    </div>
+  </div>
 
-<div class="container">
+  <div class="topbar-right">
+    <span class="badge">本机历史记录 · Vercel 后端转发</span>
 
-<div class="panel">
+    <div class="control" title="三种布局可切换：Tab / 上下 / 左右">
+      <span>布局</span>
+      <select id="layoutSelect">
+        <option value="tabs">Tab 切换</option>
+        <option value="vertical">上下分区</option>
+        <option value="horizontal">左右分区</option>
+      </select>
+    </div>
 
-<h3>任务输入</h3>
-
-<select id="model">
-<option value="qwen-plus">qwen-plus</option>
-<option value="qwen-max">qwen-max</option>
-</select>
-
-<br><br>
-
-<textarea id="brief" placeholder="输入任务brief..."></textarea>
-
-<br><br>
-
-<button onclick="generate()">生成任务卡</button>
-
+    <button class="theme-toggle" id="themeToggleBtn">深色模式</button>
+  </div>
 </div>
 
-<div class="panel">
+<div class="page">
+  <div class="page-subtitle">说明：简单任务与复杂任务为两套独立工作台，请根据任务类型将 brief 粘贴到对应区域。</div>
 
-<h3>生成结果</h3>
+  <div class="enhance-banner">
+    <div>🧠</div>
+    <div>
+      <div class="enhance-banner-title">历史任务增强模式已启用</div>
+      <div class="enhance-banner-desc">
+        系统会参考你过往任务卡中的写法逻辑与典型示例，提升新任务 brief 结构化输出的精准度与内部任务卡风格一致性。
+      </div>
+    </div>
+  </div>
 
-<div id="output" class="result"></div>
+  <!-- API -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-header">
+      <div class="card-title">🔐 AIHubMix 模型设置</div>
+      <div class="tiny">前端无需填写 Key；Key 已配置在 Vercel 环境变量</div>
+    </div>
 
-<br>
+    <div class="api-key-box">
+      <div class="api-key-title">🔐 API Key 设置 <span class="api-key-sub">（服务端已配置）</span></div>
+      <input id="apiKey" type="password" placeholder="无需填写（在 Vercel 设置 AIHUBMIX_API_KEY）" disabled />
+      <div class="api-key-actions">
+        <button class="btn-secondary" id="saveKeyBtn" disabled>💾 保存</button>
+        <button class="btn-ghost" id="clearKeyBtn" disabled>🧹 清除</button>
+        <span class="api-key-tip">当前为后端转发模式：浏览器不暴露任何 API Key</span>
+      </div>
+    </div>
 
-<button onclick="copyFeishu()">复制飞书格式</button>
+    <div class="btn-row" style="margin-top:10px;">
+      <span class="pill">简单任务模型</span>
+      <select id="simpleModel" style="min-width:180px;">
+        <option value="gpt-4o-mini">gpt-4o-mini</option>
+        <option value="gpt-4o">gpt-4o</option>
+        <option value="gpt-4.1-mini">gpt-4.1-mini</option>
+        <option value="gpt-4.1">gpt-4.1</option>
+        <option value="o3-mini">o3-mini</option>
+      </select>
 
+      <span style="width:10px;"></span>
+
+      <span class="pill">复杂任务模型</span>
+      <select id="complexModel" style="min-width:180px;">
+        <option value="gpt-4o-mini">gpt-4o-mini</option>
+        <option value="gpt-4o">gpt-4o</option>
+        <option value="gpt-4.1-mini">gpt-4.1-mini</option>
+        <option value="gpt-4.1">gpt-4.1</option>
+        <option value="o3-mini">o3-mini</option>
+      </select>
+
+      <button class="btn-secondary" id="saveModelBtn">💾 保存模型</button>
+      <span class="tiny">建议：简单任务默认 gpt-4o-mini；复杂任务可切到 gpt-4o / gpt-4.1</span>
+    </div>
+
+    <div class="status" id="statusText"></div>
+  </div>
+
+  <!-- Layout Tabs -->
+  <div class="tabs" id="tabsBar">
+    <button class="tab-btn active" data-tab="simple">简单任务</button>
+    <button class="tab-btn" data-tab="complex">复杂任务</button>
+  </div>
+
+  <div class="workspace-wrap" id="workspaceWrap">
+    <div class="workspace-grid" id="workspaceGrid">
+
+      <!-- Simple workspace -->
+      <div class="card workspace-card active" id="wsSimple">
+        <div class="card-header">
+          <div class="card-title">简单任务工作台</div>
+          <div class="badge">适配：单一目标 · 明确交付</div>
+        </div>
+
+        <div>
+          <div class="brief-label">原始任务 / brief <span>粘贴 CEO / 会议 / 语音整理内容</span></div>
+          <textarea id="rawInputSimple" placeholder="例如：在月度经营会上，CEO 提出需要拆分渠道分析会和公司级经营会…"></textarea>
+        </div>
+
+        <div class="btn-row" style="margin-top:12px;">
+          <button class="btn-primary" id="btnStandardizeSimple">生成标准化任务卡</button>
+          <button class="btn-secondary" id="btnTitleFromTaskSimple">从任务卡提炼标题</button>
+          <button class="btn-secondary" id="btnCheckSimple">brief完整度校验</button>
+          <span class="pill">历史任务逻辑已增强</span>
+          <span class="action-tip">建议先生成任务卡，再提炼标题</span>
+        </div>
+
+        <div class="result-grid">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">标准化任务卡（简单）</div>
+              <button class="btn-ghost" id="copyTaskBtnSimple">复制</button>
+            </div>
+            <div class="result-box" id="taskOutputSimple">（点击「生成标准化任务卡」后在此展示结果）</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">标题候选（≤30字）</div>
+              <button class="btn-ghost" id="copyTitleBtnSimple">复制</button>
+            </div>
+            <div class="result-box" id="titleOutputSimple">（先生成任务卡，再点击「从任务卡提炼标题」；点击某条标题可直接复制）</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">brief完整度校验（简单）</div>
+              <button class="btn-ghost" id="copyCheckBtnSimple">复制</button>
+            </div>
+            <div class="result-box" id="checkOutputSimple">（点击「brief完整度校验」后在此展示结果）</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Complex workspace -->
+      <div class="card workspace-card" id="wsComplex">
+        <div class="card-header">
+          <div class="card-title">复杂任务工作台</div>
+          <div class="badge">适配：多目标/多干系人 · 需要边界&成功画面</div>
+        </div>
+
+        <div>
+          <div class="brief-label">原始任务 / brief <span>把复杂任务相关信息都粘贴在这里（你们自行识别）</span></div>
+          <textarea id="rawInputComplex" placeholder="例如：双舱产品重新概念&命名，需要让消费者更能Get…（可包含背景、限制、成功画面等）"></textarea>
+        </div>
+
+        <div class="btn-row" style="margin-top:12px;">
+          <button class="btn-primary" id="btnStandardizeComplex">生成标准化任务卡</button>
+          <button class="btn-secondary" id="btnTitleFromTaskComplex">从任务卡提炼标题</button>
+          <button class="btn-secondary" id="btnCheckComplex">brief完整度校验</button>
+          <span class="pill">历史任务逻辑已增强</span>
+          <span class="action-tip">行动会强制包含 Owner & DDL</span>
+        </div>
+
+        <div class="result-grid">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">标准化任务卡（复杂）</div>
+              <button class="btn-ghost" id="copyTaskBtnComplex">复制</button>
+            </div>
+            <div class="result-box" id="taskOutputComplex">（点击「生成标准化任务卡」后在此展示结果）</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">标题候选（≤30字）</div>
+              <button class="btn-ghost" id="copyTitleBtnComplex">复制</button>
+            </div>
+            <div class="result-box" id="titleOutputComplex">（先生成任务卡，再点击「从任务卡提炼标题」；点击某条标题可直接复制）</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">brief完整度校验（复杂）</div>
+              <button class="btn-ghost" id="copyCheckBtnComplex">复制</button>
+            </div>
+            <div class="result-box" id="checkOutputComplex">（点击「brief完整度校验」后在此展示结果）</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
+<!-- History drawer toggle -->
+<button class="history-drawer-toggle" id="historyToggleBtn">
+  <span class="icon">🕒</span> 历史任务 <span id="historyToggleArrow">▸</span>
+</button>
+
+<!-- History drawer -->
+<div class="history-drawer" id="historyDrawer">
+  <div class="history-drawer-header">
+    <div class="history-drawer-title">🕒 历史任务 <span class="tag">按简单/复杂区分</span></div>
+    <button class="btn-ghost" id="closeHistoryBtn">✕</button>
+  </div>
+  <div class="history-drawer-sub">点击一条记录可回填到对应工作台～</div>
+  <div class="history-drawer-body">
+    <div class="btn-row" style="margin:2px 0 6px;">
+      <button class="btn-ghost" id="refreshHistoryBtn">刷新</button>
+      <button class="btn-ghost" id="clearHistoryBtn">清空</button>
+    </div>
+    <div id="historyList" class="history-list">
+      <div class="history-empty">暂无历史记录</div>
+    </div>
+  </div>
 </div>
 
 <script>
+  // ===== DOM =====
+  const apiKeyInput = document.getElementById('apiKey');
+  const saveKeyBtn = document.getElementById('saveKeyBtn');
+  const clearKeyBtn = document.getElementById('clearKeyBtn');
+  const statusText = document.getElementById('statusText');
 
-const HISTORY_RULES = `
-任务卡写作规则：
+  const layoutSelect = document.getElementById('layoutSelect');
+  const tabsBar = document.getElementById('tabsBar');
+  const workspaceWrap = document.getElementById('workspaceWrap');
+  const wsSimple = document.getElementById('wsSimple');
+  const wsComplex = document.getElementById('wsComplex');
 
-简单任务：
-背景一句话
-目的说明为什么做
-行动1-3条
-成果定义明确
-结束标准可关闭
+  const rawInputSimple = document.getElementById('rawInputSimple');
+  const taskOutputSimple = document.getElementById('taskOutputSimple');
+  const titleOutputSimple = document.getElementById('titleOutputSimple');
+  const checkOutputSimple = document.getElementById('checkOutputSimple');
 
-复杂任务：
-战略意图说明为什么做
-底层逻辑体现因果链
-成功画面可观察
-边界提醒说明限制
-行动包含Owner与DDL
+  const rawInputComplex = document.getElementById('rawInputComplex');
+  const taskOutputComplex = document.getElementById('taskOutputComplex');
+  const titleOutputComplex = document.getElementById('titleOutputComplex');
+  const checkOutputComplex = document.getElementById('checkOutputComplex');
+
+  const btnStandardizeSimple = document.getElementById('btnStandardizeSimple');
+  const btnTitleFromTaskSimple = document.getElementById('btnTitleFromTaskSimple');
+  const btnCheckSimple = document.getElementById('btnCheckSimple');
+
+  const btnStandardizeComplex = document.getElementById('btnStandardizeComplex');
+  const btnTitleFromTaskComplex = document.getElementById('btnTitleFromTaskComplex');
+  const btnCheckComplex = document.getElementById('btnCheckComplex');
+
+  const copyTaskBtnSimple = document.getElementById('copyTaskBtnSimple');
+  const copyTitleBtnSimple = document.getElementById('copyTitleBtnSimple');
+  const copyCheckBtnSimple = document.getElementById('copyCheckBtnSimple');
+
+  const copyTaskBtnComplex = document.getElementById('copyTaskBtnComplex');
+  const copyTitleBtnComplex = document.getElementById('copyTitleBtnComplex');
+  const copyCheckBtnComplex = document.getElementById('copyCheckBtnComplex');
+
+  const historyToggleBtn = document.getElementById('historyToggleBtn');
+  const historyToggleArrow = document.getElementById('historyToggleArrow');
+  const historyDrawer = document.getElementById('historyDrawer');
+  const closeHistoryBtn = document.getElementById('closeHistoryBtn');
+  const historyListEl = document.getElementById('historyList');
+  const refreshHistoryBtn = document.getElementById('refreshHistoryBtn');
+  const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+
+  const simpleModelSelect = document.getElementById('simpleModel');
+  const complexModelSelect = document.getElementById('complexModel');
+  const saveModelBtn = document.getElementById('saveModelBtn');
+
+  // ===== Storage =====
+  const STORAGE_KEY_HISTORY = 'TASK_WORKBENCH_HISTORY_V4';
+  const STORAGE_KEY_THEME = 'TASK_WORKBENCH_THEME_V4';
+  const STORAGE_KEY_LAYOUT = 'TASK_WORKBENCH_LAYOUT_V4';
+  const STORAGE_KEY_SIMPLE_MODEL = 'TASK_WORKBENCH_SIMPLE_MODEL_V4';
+  const STORAGE_KEY_COMPLEX_MODEL = 'TASK_WORKBENCH_COMPLEX_MODEL_V4';
+  const MAX_HISTORY = 80;
+
+  // ===== 历史任务逻辑增强：简单任务 =====
+  const SIMPLE_HISTORY_CONTEXT = `
+你是公司内部的任务卡结构化助手。请严格参考历史任务卡的写法逻辑来生成简单任务卡，确保输出像内部真实任务卡，而不是泛泛的 AI 文案。
+
+【历史简单任务写法规则】
+1. 背景：只用一句话说明任务来源、问题场景或触发原因，不展开成长篇分析。
+2. 目的：用一句话说明为什么要做这件事，强调任务价值。
+3. 行动：控制在1-3条，要求具体、可执行，避免空泛表述。
+4. 成果定义：明确最终交付物或结果，不写模糊表述。
+5. 任务结束标准：必须写成“什么条件下可以Close”的判断标准。
+6. 整体风格：表达简洁、像内部任务卡，不像汇报材料，不写成长篇分析。
+
+【历史简单任务示例1｜BI工具教学任务】
+任务标题：【进行中】教会部分一线业务同学掌握BI工具可以进行简单的自助分析
+背景：Harry在日会上提出，数据底层能力已搭好，但工具模板的生产化与日常可用性仍主要依赖数据团队，形成生产力瓶颈。
+目的：通过让部分一线业务同学掌握工具使用方法，形成前线自助生成价值驱动树的能力，减轻数据团队重复制作负担，加快业务洞察速度。
+行动：
+1. 由数据团队与负责人筛选适合作为价值驱动树使用者的业务同学
+2. 完成5名以上一线业务同学的教学与实操落地
+成果定义：形成可使用BI工具完成简单分析的一线业务同学群体。
+任务结束标准：5名以上一线业务同学具备使用BI工具简单分析数据的能力。
+
+【历史简单任务示例2｜电器能力建设任务】
+任务标题：讨论电器能力匹配与支撑：从研发→产品→供应链
+背景：电器产品对公司重要，但当前相关领域能力仍有欠缺，需要尽快补齐。
+目的：明确公司具备电器研发能力的路径及未来招聘电器端专业人才的方案，确保研发→产品→供应链能力匹配与支撑。
+行动：
+1. 与研发、产品、供应链对齐电器研发能力建设路径
+2. 明确未来招聘电器端专业人才方案
+成果定义：形成电器研发能力建设方案及人才招聘规划。
+任务结束标准：产出电器能力匹配支撑的整体方案，确认后开启人才补充。
+
+【历史简单任务示例3｜消费者认知验证任务】
+任务标题：验证消费者是否知道我们的除味是除装修味
+背景：当前双舱未明确标注“除装修味”，也未专门拍摄相关内容，导致消费者对除装修味认知存在疑问。
+目的：验证消费者是否理解“除装修味”的概念及其是否满足消费者需求，明确消费者对除装修味的认知和需求状况。
+行动：
+1. 调查消费者是否知道“除装修味”这一概念
+2. 分析消费者对除装修味需求的认知与真实需要
+成果定义：输出关于消费者对“除装修味”认知度及需求分析的调研报告。
+任务结束标准：完成调研与分析报告，经Harry确认后任务关闭。
+
+【历史简单任务示例4｜红书策略专项会】
+任务标题：红书策略专项会
+背景：针对红书综合战略的制定，存在策略无人拍板导致推进停滞的问题。
+目的：明确红书品牌种草及销售闭环的预算决策流程和责任人，推动红书整体战略制定和执行。
+行动：
+1. 组织外部红书专家进行分享，帮助团队理解红书现状及打法
+2. 召开内部红书策略会，结合外部视角制定具体战略方案
+成果定义：形成红书综合策略方向、预算决策流程和职责分工。
+任务结束标准：参与人员名单及职责明确，预算决策权限落实，完成外部专家沟通并形成会议纪要，由相关负责人确认成果。
 `;
 
-const HISTORY_EXAMPLES = `
+  // ===== 历史任务逻辑增强：复杂任务 =====
+  const COMPLEX_HISTORY_CONTEXT = `
+你是公司内部的复杂任务卡结构化助手。请严格参考历史复杂任务卡的写法逻辑生成复杂任务卡，确保输出符合公司内部战略拆解风格。
 
-历史简单任务示例：
+【历史复杂任务卡写法规则】
+1. 战略意图：回答“为什么现在要做这件事”，体现组织价值和战略意义。
+2. 底层逻辑：必须体现关键因果链、判断逻辑和推进理由，不能只写口号。
+3. 成功画面：描述任务做成后会出现什么结果，要求可观察、可验收。
+4. 边界提醒：明确不做什么、什么条件下才做、哪些前提必须先成立。
+5. 背景：简洁说明任务从哪里来、目前面临什么问题。
+6. 行动：要求拆到 Owner、DDL、动作、产出，保证可执行。
+7. 整体风格：偏内部战略拆解风格，表达清晰，不写空泛套话。
 
-案例1：
-背景：BI工具能力依赖数据团队，导致生产力瓶颈。
-目的：培养业务同学自助分析能力。
-行动：
-1.筛选业务同学
-2.完成BI教学
-成果定义：业务同学可独立分析数据
-结束标准：5名业务同学具备能力
-
-案例2：
-背景：电器产品能力不足。
-目的：补齐研发能力。
-行动：
-1.对齐研发产品供应链
-2.制定人才招聘方案
-成果定义：形成能力建设方案
-结束标准：确认方案并启动招聘
-
-
-历史复杂任务示例：
-
-案例1：
-战略意图：升级战略地图支持策略制定。
+【历史复杂任务示例1｜组织形态升级试点】
+任务标题：对组织形式的新思考：以大品类为单元的组织运转机制升级试点
+战略意图：通过调整新的组织形态，形成独立的团队运转，以大品类为单位提升组织对品类机会的响应和执行能力。
 底层逻辑：
-1.数据分析不完整
-2.渠道策略需要支持
+1. 2026年公司计划抓住喷雾、空气净化、大车载等大品类市场机会。
+2. 现有组织形态和主流程无法有效支撑抓住这些机会。
+3. 需要通过以大品类为单位运转来形成更直接的组织响应能力。
 成功画面：
-战略地图完整
+1. 输出新的组织形态和运转机制方案文档
+2. 方案获得Harry确认并具备可执行性
+3. 大车载品类线试点运行顺畅，具备推广价值
 边界提醒：
-不展开所有品类
-背景：凝胶会议提出需求
+1. 先以大车载进行打样，不直接全面铺开
+2. 方案必须经过Harry确认后再推进落地
+背景：现有组织形态和主流程无法有效支撑大品类机会抓取。
 行动：
-Owner:XX DDL:XX 梳理渠道数据
+1. Owner：黄灵颖｜DDL：待定｜动作：以大车载品类线进行打样，梳理新的组织形态和运转机制｜产出：组织形态及运转机制方案文档
+2. Owner：黄灵颖｜DDL：待定｜动作：与Harry确认方案并推进落地｜产出：确认版落地方案
 
-案例2：
-战略意图：建立除甲醛第一品牌认知。
+【历史复杂任务示例2｜市场地位信任状升级】
+任务标题：对市场地位信任状做升级，支撑消费者对我们形成“除甲醛第一品牌”的心智
+战略意图：通过在直播间露出市场地位相关认证，让消费者形成“希望树是除甲醛领域第一品牌”的心智认知，强化信任感并提升直播间转化效率。
 底层逻辑：
-消费者需要信任背书
+1. 各类认证本身不是目标，而是用于支撑“除甲醛第一”的信任背书。
+2. 先明确直播间需要传递给消费者的“第一心智结果”，再反推所需的市场地位认证与表达方式。
+3. 所有表述都应以是否有助于直播间转化作为最终判断标准。
 成功画面：
-直播间形成第一品牌心智
+1. 拿到相关市场地位认证
+2. 直播间露出后让消费者形成“除醛第一品牌”的心智
+3. 相关表达可稳定复用在直播话术、物料及后续品类扩展中
 边界提醒：
-表达必须合规
-背景：直播转化效率需要提升
+1. 不以“认证方能给什么”倒推我们要讲什么
+2. 若消费者侧无法形成清晰“第一”感知，应及时调整或放弃
+3. 所有认证与表达必须以合规、可落地于直播间为前提
+背景：需要在直播间形成可提升转化的“第一品牌”心智。
 行动：
-Owner:XX DDL:XX 完成市场认证路径
+1. Owner：张琬璐｜DDL：待定｜动作：完整听一遍冯卫东团队沟通，了解背景信息｜产出：背景梳理
+2. Owner：张琬璐｜DDL：待定｜动作：整理现有情况和想法，完成测试验证｜产出：验证结论
+3. Owner：张琬璐｜DDL：待定｜动作：与冯卫东团队对接，同步思路并咨询建议｜产出：对接纪要
 
+【历史复杂任务示例3｜双舱GTM命名与价值点任务】
+任务标题：双舱GTM：双舱产品重新概念及命名讨论，如何让消费者更能Get它的价值点
+战略意图：通过对“双舱”产品的命名与核心利益点重新定义，把当前“Feature表述不清、价值点难被理解”的问题，转化为消费者可一眼理解的高端线价值主张，从而支撑高端线定价与增长。
+底层逻辑：
+1. 以“Benefit优先”作为表达与验证原则。
+2. 通过“我是什么—有何不同—何以见得”三问框架，把产品特性翻译为消费者价值。
+3. 以消费者是否“秒懂”作为最终检验标准。
+成功画面：
+1. 消费者在关键触点能迅速理解“双舱高端线”的核心价值
+2. 认知层面能准确复述其解决的是装修味/甲醛相关问题
+3. 行为层关键指标提升，如点击、停留、加购、咨询、转化
+边界提醒：
+1. “双舱”仅为内部代号，对外命名不强制使用“双舱”字样
+2. 不预设最终命名结论，允许多套命名与表达方案并行验证
+3. 允许未来分阶段推进表达升级
+背景：当前双舱产品价值点难被消费者快速理解，影响高端线表达与转化。
+行动：
+1. Owner：张婷 / 姚雪子 / 张琬璐｜DDL：待定｜动作：围绕价值点、命名、证据体系展开方案设计｜产出：多套概念及命名方案
+2. Owner：张婷 / 姚雪子 / 张琬璐｜DDL：待定｜动作：验证消费者是否真正Get价值点｜产出：验证结论
+
+【历史复杂任务示例4｜AI+创业小队探索】
+任务标题：探索“AI+创业小队”的组织与业务可能性
+战略意图：为公司提前探索一种可能具备非线性增长潜力的创新模式，在不干扰现有主线业务的前提下，为未来的新产品、新打法和新组织能力预留空间。
+底层逻辑：
+1. AI带来的变化不仅是工具效率提升，更可能重塑“人如何做生意”的方式。
+2. 从一开始就以AI原生方式运转的小型创业单元，在试错成本、迭代速度和创造力上具备更高上限。
+3. 如果长期停留在想法层面而不持续推动，相关机会可能会自然消散。
+成功画面：
+1. 公司内部对“AI+创业小队”形成清晰认知与讨论基础
+2. 至少有1个可被持续跟进的探索方向或试点形态
+3. 相关人选逐步浮出水面，具备进一步推进的可能性
+边界提醒：
+1. 不将该任务等同为短期业绩或明确商业承诺
+2. 不在探索阶段贸然进行大规模资源投入
+3. 不以行政指令方式强行推动“创业”
+背景：既有组织形态可能难以充分释放AI带来的结构性机会。
+行动：
+1. Owner：陈登志｜DDL：待定｜动作：持续探索AI原生小队作为潜在创新形态的可行性｜产出：探索方向清单
+2. Owner：陈登志｜DDL：待定｜动作：从外部与内部两个方向并行思考人选来源｜产出：候选人画像
+3. Owner：陈登志｜DDL：待定｜动作：结合自身AI能力与公司业务认知，探讨是否具备带队与孵化条件｜产出：初步判断
+
+【历史复杂任务示例5｜战略地图升级】
+任务标题：战略地图升级：补齐各渠道各品类罐单价X客单价交叉分析
+战略意图：通过升级战略地图，更清晰地展示各价格段的竞争情况，为策略制定提供指引。
+底层逻辑：
+1. 凝胶分价格段防御会上，抖音罐单价与客单价交叉分析帮助看清战场形势。
+2. 若其他渠道与品类数据缺失，战略地图无法真正支撑策略判断。
+3. 需要补充渠道、品类和更好的呈现方式，才能形成可指引策略的地图。
+成功画面：
+1. 升级后的战略地图覆盖核心渠道与重要品类
+2. 展示形式更清晰，能够直接支持策略制定
+边界提醒：
+1. 先聚焦核心渠道与重要品类
+2. 上门除醛数据需先确认是否可实现
+背景：当前战略地图不足以完整反映各渠道、各品类战场形势。
+行动：
+1. Owner：陈登志｜DDL：待定｜动作：补充天猫和上门除醛数据｜产出：渠道补充数据
+2. Owner：陈登志｜DDL：待定｜动作：补充其他品类数据，优先空净｜产出：品类补充数据
+3. Owner：陈登志｜DDL：待定｜动作：优化呈现形式｜产出：升级版战略地图
 `;
 
-async function generate(){
+  // ===== Prompts =====
+  const PROMPT_STANDARDIZE_SIMPLE = `
+${SIMPLE_HISTORY_CONTEXT}
 
-const brief=document.getElementById("brief").value;
-const model=document.getElementById("model").value;
+📥 请输出任务的标准化字段内容，需结合上下文梳理相关信息，不要引入未提及的主观臆测：
 
-const prompt = `
-${HISTORY_RULES}
+【一、任务描述】
+① 背景（一句话）
+② 目的（一句话）
+③ 行动（列出1-3点）
 
-${HISTORY_EXAMPLES}
+【二、成果定义】（一句话）
+明确交付物及成功标准：输出什么？达到什么标准才算成功？如原话不完整可基于常规标准合理补齐，但不能杜撰。
 
-当前任务brief：
-${brief}
+【三、任务结束标准】（精简一句话）
+说明在什么条件下可以 Close，是否需要 CEO 确认/会议共识/系统上线成功/数据校验通过等。
 
-请按照历史任务卡逻辑生成完整任务卡
+以下是原始 brief：
 `;
 
-const res=await fetch("/api/dashscope",{
-method:"POST",
-headers:{ "Content-Type":"application/json"},
-body:JSON.stringify({
-model:model,
-prompt:prompt,
-temperature:0.2
-})
-});
+  const PROMPT_STANDARDIZE_COMPLEX = `
+${COMPLEX_HISTORY_CONTEXT}
 
-const data=await res.json();
+📥 请基于 brief 输出以下字段（必须严格按顺序输出，字段名不变），不引入主观臆测、不新增未提及事实：
+① 战略意图（一句话：为什么做/对组织的价值）
+② 底层逻辑（2-4条：关键假设/因果链/为什么这些动作能达成意图）
+③ 成功画面（2-4条：可被验收的结果描述，尽量用里程碑/指标/可观察证据表达）
+④ 边界提醒（2-4条：不做什么/不包含什么/风险前置/需要谁拍板的边界）
+⑤ 背景（一句话：来源/问题场景/触发点）
+⑥ 行动（列出 3-7 点；每点必须包含：Owner、DDL、动作、产出/里程碑。格式示例：
+- Owner：XX｜DDL：YYYY-MM-DD｜动作：…｜产出：…）
 
-document.getElementById("output").innerText=data.content || data.error;
+以下是原始 brief：
+`;
 
-}
+  const PROMPT_TITLE_FROM_TASK = `
+请基于以下「标准化任务卡内容」，提炼 2-3 个任务卡标题候选，要求：
+- 每条标题不超过 30 个字（必须严格遵守）
+- 标题要能概括“对象 + 动作 + 交付物/范围”（尽量包含，但不要变长）
+- 不要引入任务卡未出现的新信息
+- 避免空泛词（如“优化/提升/跟进”单独出现）
+- 输出格式必须严格为：
+1) ...
+2) ...
+3) ...
+以下是标准化任务卡：
+`;
 
-function copyFeishu(){
+  const PROMPT_CHECK_SIMPLE = `
+请你作为「任务描述校验助手」，根据 brief 内容：
+✔ 判断逻辑
+若 brief 明确 → 直接回复：“brief完整，可执行”
+若 brief 不明确 → 请仅输出以下三项（保持极简）：
+- 缺少项：（逐条指出 brief 缺少哪些必要信息）
+- CEO需确认：（哪些关键点需要 CEO 明确）
+- 建议补充：（一句话轻提示，不做扩展和决策）
 
-const text=document.getElementById("output").innerText;
+✔ 校验标准（仅判断两点）
+1) 成果定义是否清晰（最终要产出什么？呈现形式是什么？）
+2) 交付标准是否明确（什么条件下算完成？是否可验收？）
 
-const feishu = `## 任务卡\n\n${text}`;
+以下是 brief 内容：
+`;
 
-navigator.clipboard.writeText(feishu);
+  const PROMPT_CHECK_COMPLEX = `
+请你作为「复杂任务 brief 完整度校验助手」，根据 brief 内容进行校验：
+✔ 判断逻辑
+若 brief 足够完整 → 直接回复：“brief完整，可执行（复杂任务）”
+若 brief 不完整 → 只输出以下三项（保持极简）：
+- 缺少项：（逐条指出缺少哪些关键字段/信息）
+- CEO需确认：（必须由CEO/关键决策者拍板的点）
+- 建议补充：（一句话轻提示，不做扩展）
 
-alert("已复制为飞书格式");
+✔ 校验维度（升级全量校验）
+1) 战略意图是否明确（为什么做/价值）
+2) 底层逻辑是否自洽（关键假设/因果链）
+3) 成功画面是否可验收（指标/里程碑/证据）
+4) 边界是否清楚（不做什么/风险/拍板点）
+5) 背景是否充分（来源/场景/约束）
+6) 行动是否可执行（是否包含 Owner & DDL & 产出里程碑）
 
-}
+以下是 brief 内容：
+`;
 
+  // ===== helpers =====
+  function setStatus(msg){ statusText.textContent = msg || ''; }
+
+  function setLoading(loading){
+    const buttons = [
+      btnStandardizeSimple, btnTitleFromTaskSimple, btnCheckSimple,
+      btnStandardizeComplex, btnTitleFromTaskComplex, btnCheckComplex
+    ];
+    buttons.forEach(b => b.disabled = loading);
+  }
+
+  function readHistory(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY_HISTORY);
+      if(!raw) return [];
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr : [];
+    }catch{ return []; }
+  }
+
+  function writeHistory(list){
+    localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(list.slice(0, MAX_HISTORY)));
+  }
+
+  function saveHistoryEntry(mode, type){
+    const inputEl = mode === 'simple' ? rawInputSimple : rawInputComplex;
+    const taskEl  = mode === 'simple' ? taskOutputSimple : taskOutputComplex;
+    const titleEl = mode === 'simple' ? titleOutputSimple : titleOutputComplex;
+    const checkEl = mode === 'simple' ? checkOutputSimple : checkOutputComplex;
+
+    const input = (inputEl.value || '').trim();
+    if(!input) return;
+
+    const history = readHistory();
+    const now = new Date();
+    const entry = {
+      id: Date.now(),
+      time: now.toLocaleString(),
+      mode,
+      type,
+      input,
+      task: taskEl.innerText || taskEl.textContent || '',
+      titles: titleEl.innerText || titleEl.textContent || '',
+      check: checkEl.innerText || checkEl.textContent || ''
+    };
+    history.unshift(entry);
+    writeHistory(history);
+    renderHistory();
+  }
+
+  function renderHistory(){
+    const history = readHistory();
+    historyListEl.innerHTML = '';
+
+    if(!history.length){
+      const empty = document.createElement('div');
+      empty.className = 'history-empty';
+      empty.textContent = '暂无历史记录';
+      historyListEl.appendChild(empty);
+      return;
+    }
+
+    history.forEach(entry=>{
+      const item = document.createElement('div');
+      item.className = 'history-item';
+
+      const title = document.createElement('div');
+      title.className = 'history-title';
+
+      const tagType = entry.type === 'standardize' ? '任务卡'
+                    : entry.type === 'title_from_task' ? '标题'
+                    : entry.type === 'check' ? '校验'
+                    : '任务';
+
+      const tagMode = entry.mode === 'complex' ? '复杂' : '简单';
+
+      title.textContent = `【${tagMode}/${tagType}】${entry.input.slice(0, 26)}${entry.input.length > 26 ? '…' : ''}`;
+
+      const meta = document.createElement('div');
+      meta.className = 'history-meta';
+
+      const pill1 = document.createElement('span');
+      pill1.className = 'tag';
+      pill1.textContent = tagMode;
+
+      const pill2 = document.createElement('span');
+      pill2.className = 'tag';
+      pill2.textContent = tagType;
+
+      const time = document.createElement('span');
+      time.textContent = entry.time;
+
+      meta.appendChild(pill1);
+      meta.appendChild(pill2);
+      meta.appendChild(time);
+
+      item.appendChild(title);
+      item.appendChild(meta);
+
+      item.addEventListener('click', ()=>{
+        if(entry.mode === 'simple'){
+          rawInputSimple.value = entry.input || '';
+          if(entry.task) taskOutputSimple.textContent = entry.task;
+          if(entry.titles) titleOutputSimple.textContent = entry.titles;
+          if(entry.check) checkOutputSimple.textContent = entry.check;
+          setStatus('已从历史记录回填到【简单任务】。');
+          if(currentLayout() === 'tabs') activateTab('simple');
+        }else{
+          rawInputComplex.value = entry.input || '';
+          if(entry.task) taskOutputComplex.textContent = entry.task;
+          if(entry.titles) titleOutputComplex.textContent = entry.titles;
+          if(entry.check) checkOutputComplex.textContent = entry.check;
+          setStatus('已从历史记录回填到【复杂任务】。');
+          if(currentLayout() === 'tabs') activateTab('complex');
+        }
+      });
+
+      historyListEl.appendChild(item);
+    });
+  }
+
+  async function copyText(text, label){
+    if(!text || !text.trim()){
+      alert(`没有可复制的${label || '内容'}`);
+      return;
+    }
+    try{
+      await navigator.clipboard.writeText(text);
+      setStatus(`${label || '内容'}已复制到剪贴板`);
+    }catch(e){
+      console.error(e);
+      alert('复制失败，可尝试手动选择文本复制。');
+    }
+  }
+
+  function parseTitleLines(text){
+    const lines = (text || '')
+      .split('\n')
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const picked = [];
+    for(const line of lines){
+      const m = line.match(/^\s*(?:\d+[\)\.、]|[-•])\s*(.+)\s*$/);
+      const t = (m ? m[1] : line).trim();
+      if(t) picked.push(t);
+      if(picked.length >= 3) break;
+    }
+    return picked.length ? picked : lines.slice(0,3);
+  }
+
+  function truncateTo30Chars(s){
+    const str = (s || '').trim();
+    if(str.length <= 30) return str;
+    return str.slice(0, 30);
+  }
+
+  function renderTitleCandidates(containerEl, candidates){
+    if(!candidates || !candidates.length){
+      containerEl.textContent = '(无标题候选)';
+      return;
+    }
+
+    containerEl.innerHTML = '';
+    candidates.forEach((t, idx) => {
+      const safe = truncateTo30Chars(t);
+      const div = document.createElement('div');
+      div.style.cursor = 'pointer';
+      div.style.padding = '6px 6px';
+      div.style.borderRadius = '10px';
+      div.style.marginBottom = '6px';
+      div.style.border = '1px solid rgba(37,99,235,0.14)';
+      div.style.background = 'rgba(37, 99, 235, 0.04)';
+      div.textContent = `${idx + 1}) ${safe}（${safe.length}/30）`;
+
+      div.addEventListener('click', async ()=>{
+        await copyText(safe, '标题');
+      });
+
+      containerEl.appendChild(div);
+    });
+  }
+
+  async function callAIHubMix(prompt, modelName){
+    // 如果你的 Vercel 后端路由已经改成 /api/aihubmix，这里把 /api/dashscope 改为 /api/aihubmix 即可
+    const resp = await fetch("/api/dashscope", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: modelName,
+        prompt: prompt,
+        temperature: 0.2
+      })
+    });
+
+    const text = await resp.text();
+    let json;
+    try{ json = JSON.parse(text); }catch{ json = null; }
+
+    if(!resp.ok){
+      const msg = json?.message || json?.Message || json?.error || text || `HTTP ${resp.status}`;
+      throw new Error(`API 调用失败：HTTP ${resp.status}｜${msg}`);
+    }
+
+    return json?.content || '';
+  }
+
+  function isPlaceholder(text){
+    const t = (text || '').trim();
+    return (!t || t.includes('点击「生成标准化任务卡」') || t === '生成中…' || t.includes('生成失败'));
+  }
+
+  function getSimpleModel(){
+    return localStorage.getItem(STORAGE_KEY_SIMPLE_MODEL) || simpleModelSelect.value || 'gpt-4o-mini';
+  }
+
+  function getComplexModel(){
+    return localStorage.getItem(STORAGE_KEY_COMPLEX_MODEL) || complexModelSelect.value || 'gpt-4o-mini';
+  }
+
+  async function handleStandardize(mode){
+    const inputEl = mode === 'simple' ? rawInputSimple : rawInputComplex;
+    const taskEl  = mode === 'simple' ? taskOutputSimple : taskOutputComplex;
+    const input = (inputEl.value || '').trim();
+    if(!input){
+      alert('请先输入原始任务 / brief 文本');
+      return;
+    }
+
+    setLoading(true);
+    setStatus(mode === 'simple' ? '正在生成【简单任务】任务卡…' : '正在生成【复杂任务】任务卡…');
+    taskEl.textContent = '生成中…';
+
+    try{
+      const modelName = mode === 'simple' ? getSimpleModel() : getComplexModel();
+      const prompt = (mode === 'simple' ? PROMPT_STANDARDIZE_SIMPLE : PROMPT_STANDARDIZE_COMPLEX) + '\n\n' + input;
+      const text = await callAIHubMix(prompt, modelName);
+
+      taskEl.textContent = text || '(无返回内容)';
+      setStatus('任务卡已生成，可复制或保存');
+      saveHistoryEntry(mode, 'standardize');
+    }catch(e){
+      console.error(e);
+      taskEl.textContent = '生成失败，请检查网络或模型配置。';
+      setStatus('调用失败，请检查 AIHubMix 后端 / 网络 / 模型名称是否可用。');
+    }finally{
+      setLoading(false);
+    }
+  }
+
+  async function handleTitleFromTask(mode){
+    const taskEl  = mode === 'simple' ? taskOutputSimple : taskOutputComplex;
+    const titleEl = mode === 'simple' ? titleOutputSimple : titleOutputComplex;
+    const taskText = (taskEl.innerText || taskEl.textContent || '').trim();
+
+    if(isPlaceholder(taskText)){
+      alert('请先生成标准化任务卡，再从任务卡提炼标题');
+      return;
+    }
+
+    setLoading(true);
+    setStatus('正在从任务卡提炼标题（≤30字）…');
+    titleEl.textContent = '生成中…';
+
+    try{
+      const modelName = mode === 'simple' ? getSimpleModel() : getComplexModel();
+      const text = await callAIHubMix(PROMPT_TITLE_FROM_TASK + '\n\n' + taskText, modelName);
+      const candidates = parseTitleLines(text).map(truncateTo30Chars);
+      renderTitleCandidates(titleEl, candidates);
+      setStatus('标题候选已生成（点击某条可复制）');
+      saveHistoryEntry(mode, 'title_from_task');
+    }catch(e){
+      console.error(e);
+      titleEl.textContent = '生成失败，请检查网络或模型配置。';
+      setStatus('调用失败，请检查 AIHubMix 后端 / 网络 / 模型名称是否可用。');
+    }finally{
+      setLoading(false);
+    }
+  }
+
+  async function handleCheck(mode){
+    const inputEl = mode === 'simple' ? rawInputSimple : rawInputComplex;
+    const checkEl = mode === 'simple' ? checkOutputSimple : checkOutputComplex;
+    const input = (inputEl.value || '').trim();
+    if(!input){
+      alert('请先输入原始任务 / brief 文本');
+      return;
+    }
+
+    setLoading(true);
+    setStatus(mode === 'simple' ? '正在校验【简单任务】brief…' : '正在校验【复杂任务】brief…');
+    checkEl.textContent = '校验中…';
+
+    try{
+      const modelName = mode === 'simple' ? getSimpleModel() : getComplexModel();
+      const prompt = (mode === 'simple' ? PROMPT_CHECK_SIMPLE : PROMPT_CHECK_COMPLEX) + '\n\n' + input;
+      const text = await callAIHubMix(prompt, modelName);
+
+      checkEl.textContent = text || '(无返回内容)';
+      setStatus('brief 完整度校验完成');
+      saveHistoryEntry(mode, 'check');
+    }catch(e){
+      console.error(e);
+      checkEl.textContent = '校验失败，请检查网络或模型配置。';
+      setStatus('调用失败，请检查 AIHubMix 后端 / 网络 / 模型名称是否可用。');
+    }finally{
+      setLoading(false);
+    }
+  }
+
+  function openHistory(){
+    historyDrawer.style.display = 'flex';
+    historyToggleArrow.textContent = '▾';
+  }
+
+  function closeHistory(){
+    historyDrawer.style.display = 'none';
+    historyToggleArrow.textContent = '▸';
+  }
+
+  historyToggleBtn.addEventListener('click', ()=>{
+    const visible = historyDrawer.style.display === 'flex';
+    visible ? closeHistory() : openHistory();
+  });
+
+  closeHistoryBtn.addEventListener('click', closeHistory);
+
+  function setTheme(mode){
+    const root = document.documentElement;
+    if(mode === 'dark'){
+      root.setAttribute('data-theme','dark');
+      themeToggleBtn.textContent = '浅色模式';
+      localStorage.setItem(STORAGE_KEY_THEME, 'dark');
+    }else{
+      root.removeAttribute('data-theme');
+      themeToggleBtn.textContent = '深色模式';
+      localStorage.setItem(STORAGE_KEY_THEME, 'light');
+    }
+  }
+
+  function initTheme(){
+    const saved = localStorage.getItem(STORAGE_KEY_THEME) || 'light';
+    setTheme(saved === 'dark' ? 'dark' : 'light');
+  }
+
+  themeToggleBtn.addEventListener('click', ()=>{
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    setTheme(isDark ? 'light' : 'dark');
+  });
+
+  function currentLayout(){ return layoutSelect.value; }
+
+  function applyLayout(mode){
+    workspaceWrap.classList.remove('mode-tabs','mode-vertical','mode-horizontal');
+    if(mode === 'tabs') workspaceWrap.classList.add('mode-tabs');
+    if(mode === 'vertical') workspaceWrap.classList.add('mode-vertical');
+    if(mode === 'horizontal') workspaceWrap.classList.add('mode-horizontal');
+
+    localStorage.setItem(STORAGE_KEY_LAYOUT, mode);
+
+    if(mode === 'tabs'){
+      tabsBar.style.display = 'flex';
+      const active = document.querySelector('.tab-btn.active')?.getAttribute('data-tab') || 'simple';
+      activateTab(active);
+    }else{
+      tabsBar.style.display = 'none';
+      wsSimple.classList.add('active');
+      wsComplex.classList.add('active');
+    }
+  }
+
+  function activateTab(tab){
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    tabBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === tab));
+
+    wsSimple.classList.toggle('active', tab === 'simple');
+    wsComplex.classList.toggle('active', tab === 'complex');
+  }
+
+  function initLayout(){
+    const saved = localStorage.getItem(STORAGE_KEY_LAYOUT) || 'tabs';
+    layoutSelect.value = saved;
+    applyLayout(saved);
+  }
+
+  function loadModels(){
+    const simple = localStorage.getItem(STORAGE_KEY_SIMPLE_MODEL) || 'gpt-4o-mini';
+    const complex = localStorage.getItem(STORAGE_KEY_COMPLEX_MODEL) || 'gpt-4o-mini';
+    simpleModelSelect.value = simple;
+    complexModelSelect.value = complex;
+  }
+
+  function saveModels(){
+    localStorage.setItem(STORAGE_KEY_SIMPLE_MODEL, simpleModelSelect.value);
+    localStorage.setItem(STORAGE_KEY_COMPLEX_MODEL, complexModelSelect.value);
+    setStatus(`模型已保存：简单任务 ${simpleModelSelect.value}｜复杂任务 ${complexModelSelect.value}`);
+  }
+
+  layoutSelect.addEventListener('change', ()=> applyLayout(layoutSelect.value));
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> activateTab(btn.getAttribute('data-tab')));
+  });
+
+  saveModelBtn.addEventListener('click', saveModels);
+
+  btnStandardizeSimple.addEventListener('click', ()=> handleStandardize('simple'));
+  btnTitleFromTaskSimple.addEventListener('click', ()=> handleTitleFromTask('simple'));
+  btnCheckSimple.addEventListener('click', ()=> handleCheck('simple'));
+
+  btnStandardizeComplex.addEventListener('click', ()=> handleStandardize('complex'));
+  btnTitleFromTaskComplex.addEventListener('click', ()=> handleTitleFromTask('complex'));
+  btnCheckComplex.addEventListener('click', ()=> handleCheck('complex'));
+
+  copyTaskBtnSimple.addEventListener('click', ()=>copyText(taskOutputSimple.textContent, '任务卡（简单）'));
+  copyTitleBtnSimple.addEventListener('click', ()=>copyText(titleOutputSimple.innerText || titleOutputSimple.textContent, '标题候选（简单）'));
+  copyCheckBtnSimple.addEventListener('click', ()=>copyText(checkOutputSimple.textContent, '校验结果（简单）'));
+
+  copyTaskBtnComplex.addEventListener('click', ()=>copyText(taskOutputComplex.textContent, '任务卡（复杂）'));
+  copyTitleBtnComplex.addEventListener('click', ()=>copyText(titleOutputComplex.innerText || titleOutputComplex.textContent, '标题候选（复杂）'));
+  copyCheckBtnComplex.addEventListener('click', ()=>copyText(checkOutputComplex.textContent, '校验结果（复杂）'));
+
+  refreshHistoryBtn.addEventListener('click', renderHistory);
+  clearHistoryBtn.addEventListener('click', ()=>{
+    if(confirm('确定要清空所有历史记录吗？（简单 & 复杂都会清空）')){
+      localStorage.removeItem(STORAGE_KEY_HISTORY);
+      renderHistory();
+      setStatus('历史记录已清空');
+    }
+  });
+
+  initTheme();
+  initLayout();
+  loadModels();
+  renderHistory();
 </script>
-
 </body>
 </html>
